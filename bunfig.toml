@@ -1,0 +1,7 @@
+[install]
+# Use the registry directly (faster)
+registry = "https://registry.npmjs.org"
+
+[install.cache]
+# Enable bun's global cache
+disable = false
