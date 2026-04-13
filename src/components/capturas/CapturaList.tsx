@@ -70,7 +70,7 @@ export function CapturaList({ capturas, onDelete, isLoading }: CapturaListProps)
                 )}
               </div>
               <p className="text-xs text-muted-foreground truncate">
-                {c.nombreDuo} · Manga {c.manga}
+                {c.nombre} · Manga {c.manga}
                 {c.hora ? ` · ${formatTime(c.hora)}` : ""}
               </p>
             </div>
@@ -88,7 +88,7 @@ export function CapturaList({ capturas, onDelete, isLoading }: CapturaListProps)
                 <AlertDialogHeader>
                   <AlertDialogTitle>¿Eliminar captura?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Se eliminará la captura de {c.longitudCm} cm del dúo {c.nombreDuo}.
+                    Se eliminará la captura de {c.longitudCm} cm de {c.nombre}.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

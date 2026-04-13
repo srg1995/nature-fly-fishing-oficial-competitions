@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getClasificacion, getMangaStats, getCatches, getDuos } from "@/lib/db";
+import { getClasificacion, getMangaStats, getCatches, getParticipantes } from "@/lib/db";
 import { generarExcelResultados, getExcelFilename } from "@/lib/excel";
 import type { CatchRecord } from "@/types";
 
@@ -7,21 +7,21 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const [clasificacion, mangaStats, catches, duos] = await Promise.all([
+    const [clasificacion, mangaStats, catches, participantes] = await Promise.all([
       getClasificacion(),
       getMangaStats(),
       getCatches(),
-      getDuos(),
+      getParticipantes(),
     ]);
 
-    const duoMap = new Map(duos.map((d) => [d.id, d.nombreDuo]));
+    const participanteMap = new Map(participantes.map((p) => [p.id, p.nombre]));
 
-    const catchesWithDuo = catches.map((c: CatchRecord) => ({
+    const catchesWithNombre = catches.map((c: CatchRecord) => ({
       ...c,
-      nombreDuo: duoMap.get(c.duoId) ?? "Desconocido",
+      nombre: participanteMap.get(c.pescadorId) ?? "Desconocido",
     }));
 
-    const blob = generarExcelResultados(clasificacion, mangaStats, catchesWithDuo);
+    const blob = generarExcelResultados(clasificacion, mangaStats, catchesWithNombre);
     const buffer = await blob.arrayBuffer();
     const filename = getExcelFilename();
 

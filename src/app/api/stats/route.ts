@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   getDashboardStats,
-  getDuoStats,
+  getPescadorStats,
   getMangaStats,
   getRecentCatches,
   getBestFish,
@@ -11,10 +11,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const [basicStats, topDuos, mangaStats, recentCatches, bestFish] =
+    const [basicStats, topPescadores, mangaStats, recentCatches, bestFish] =
       await Promise.all([
         getDashboardStats(),
-        getDuoStats(),
+        getPescadorStats(),
         getMangaStats(),
         getRecentCatches(10),
         getBestFish(5),
@@ -23,7 +23,7 @@ export async function GET() {
     return NextResponse.json({
       data: {
         ...basicStats,
-        topDuos: topDuos.slice(0, 5),
+        topPescadores: topPescadores.slice(0, 5),
         mangaStats,
         recentCatches,
         bestFish,

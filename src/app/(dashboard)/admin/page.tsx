@@ -157,9 +157,9 @@ export default function AdminPage() {
   });
 
   const accionLabel: Record<string, string> = {
-    CREATE_DUO: "Crear dúo",
-    UPDATE_DUO: "Editar dúo",
-    DELETE_DUO: "Eliminar dúo",
+    CREATE_PARTICIPANTE: "Crear participante",
+    UPDATE_PARTICIPANTE: "Editar participante",
+    DELETE_PARTICIPANTE: "Eliminar participante",
     CREATE_CATCH: "Registrar captura",
     UPDATE_CATCH: "Editar captura",
     DELETE_CATCH: "Eliminar captura",

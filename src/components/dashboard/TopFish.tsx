@@ -40,7 +40,7 @@ export function TopFish({ fish, isLoading }: TopFishProps) {
                 <div className="flex items-center gap-3">
                   <span className="text-lg w-8 text-center">{medals[i] ?? `${i + 1}º`}</span>
                   <div>
-                    <p className="text-sm font-medium">{f.nombreDuo}</p>
+                    <p className="text-sm font-medium">{f.nombre}</p>
                     <p className="text-xs text-muted-foreground">Manga {f.manga}</p>
                   </div>
                 </div>

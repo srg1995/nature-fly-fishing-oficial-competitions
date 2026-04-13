@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CapturaForm } from "@/components/capturas/CapturaForm";
 import { CapturaList } from "@/components/capturas/CapturaList";
-import { useDuos } from "@/hooks/use-duos";
+import { useParticipantes } from "@/hooks/use-participantes";
 import { useCreateCaptura, useDeleteCaptura } from "@/hooks/use-capturas";
 import { useStats } from "@/hooks/use-stats";
 import { useToast } from "@/hooks/use-toast";
@@ -13,13 +12,12 @@ import type { CreateCatchFormValues } from "@/lib/validations";
 import type { RecentCatch } from "@/types";
 
 export default function CapturasPage() {
-  const { data: duos = [] } = useDuos();
+  const { data: participantes = [] } = useParticipantes();
   const { data: stats, isLoading: statsLoading } = useStats();
   const createCaptura = useCreateCaptura();
   const deleteCaptura = useDeleteCaptura();
   const { toast } = useToast();
 
-  // Last 20 captured in this session (from stats recentCatches)
   const recentCatches: RecentCatch[] = stats?.recentCatches ?? [];
 
   const handleSubmit = async (data: CreateCatchFormValues) => {
@@ -64,7 +62,7 @@ export default function CapturasPage() {
       </div>
 
       <StatsCards
-        totalDuos={stats?.totalDuos ?? 0}
+        totalPescadores={stats?.totalPescadores ?? 0}
         totalCapturas={stats?.totalCapturas ?? 0}
         totalPuntos={stats?.totalPuntos ?? 0}
         mangasActivas={stats?.mangasActivas ?? 0}
@@ -79,7 +77,7 @@ export default function CapturasPage() {
           </CardHeader>
           <CardContent>
             <CapturaForm
-              duos={duos}
+              participantes={participantes}
               onSubmit={handleSubmit}
               isLoading={createCaptura.isPending}
             />

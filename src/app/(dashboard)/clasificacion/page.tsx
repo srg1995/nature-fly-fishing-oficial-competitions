@@ -28,7 +28,7 @@ export default function ClasificacionPage() {
             Clasificación en Vivo
           </h2>
           <p className="text-muted-foreground text-sm mt-0.5">
-            Top 10 · Actualización automática cada 30 segundos
+            Top 10 individual · Actualización automática cada 30 segundos
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -54,9 +54,8 @@ export default function ClasificacionPage() {
             <div className="text-3xl mb-2">🥈</div>
             <Card className="w-full border-slate-300 border-2">
               <CardContent className="p-4 text-center">
-                <p className="font-bold">{top10[1].nombreDuo}</p>
-                <p className="text-xs text-muted-foreground">{top10[1].pescador1}</p>
-                <p className="text-xs text-muted-foreground">{top10[1].pescador2}</p>
+                <p className="font-bold">{top10[1].nombre}</p>
+                <p className="text-xs text-muted-foreground">{top10[1].club}</p>
                 <p className="text-2xl font-bold text-primary mt-2">
                   {top10[1].totalPuntos.toLocaleString("es-ES")}
                 </p>
@@ -71,9 +70,8 @@ export default function ClasificacionPage() {
             <Card className="w-full border-amber-400 border-2 shadow-lg shadow-amber-100 dark:shadow-amber-900/20">
               <CardContent className="p-4 text-center">
                 <Badge className="mb-1 bg-amber-400 text-amber-900 border-0">Líder</Badge>
-                <p className="font-bold text-lg">{top10[0].nombreDuo}</p>
-                <p className="text-xs text-muted-foreground">{top10[0].pescador1}</p>
-                <p className="text-xs text-muted-foreground">{top10[0].pescador2}</p>
+                <p className="font-bold text-lg">{top10[0].nombre}</p>
+                <p className="text-xs text-muted-foreground">{top10[0].club}</p>
                 <p className="text-3xl font-bold text-primary mt-2">
                   {top10[0].totalPuntos.toLocaleString("es-ES")}
                 </p>
@@ -87,9 +85,8 @@ export default function ClasificacionPage() {
             <div className="text-3xl mb-2">🥉</div>
             <Card className="w-full border-orange-400 border-2">
               <CardContent className="p-4 text-center">
-                <p className="font-bold">{top10[2].nombreDuo}</p>
-                <p className="text-xs text-muted-foreground">{top10[2].pescador1}</p>
-                <p className="text-xs text-muted-foreground">{top10[2].pescador2}</p>
+                <p className="font-bold">{top10[2].nombre}</p>
+                <p className="text-xs text-muted-foreground">{top10[2].club}</p>
                 <p className="text-2xl font-bold text-primary mt-2">
                   {top10[2].totalPuntos.toLocaleString("es-ES")}
                 </p>
@@ -106,12 +103,12 @@ export default function ClasificacionPage() {
           ? Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="h-20 bg-muted animate-pulse rounded-xl" />
             ))
-          : top10.map((duo, idx) => {
+          : top10.map((pescador, idx) => {
               const pos = idx + 1;
               const colors = positionColors[pos];
               return (
                 <Card
-                  key={duo.duoId}
+                  key={pescador.pescadorId}
                   className={cn(
                     "transition-all",
                     colors && `border-2 ${colors.border}`
@@ -130,18 +127,16 @@ export default function ClasificacionPage() {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-base truncate">{duo.nombreDuo}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {duo.pescador1} · {duo.pescador2}
-                      </p>
+                      <p className="font-bold text-base truncate">{pescador.nombre}</p>
+                      <p className="text-sm text-muted-foreground">{pescador.club}</p>
                       <div className="flex flex-wrap gap-2 mt-1">
-                        {duo.plica && (
+                        {pescador.plica && (
                           <Badge variant="outline" className="text-xs font-mono">
-                            {duo.plica}
+                            #{pescador.plica}
                           </Badge>
                         )}
-                        {duo.tramo && (
-                          <span className="text-xs text-muted-foreground">{duo.tramo}</span>
+                        {pescador.tramo && (
+                          <span className="text-xs text-muted-foreground">{pescador.tramo}</span>
                         )}
                       </div>
                     </div>
@@ -149,16 +144,16 @@ export default function ClasificacionPage() {
                     {/* Stats */}
                     <div className="flex items-center gap-6 flex-shrink-0">
                       <div className="text-center hidden sm:block">
-                        <p className="text-lg font-bold">{duo.capturasValidas}</p>
+                        <p className="text-lg font-bold">{pescador.capturasValidas}</p>
                         <p className="text-xs text-muted-foreground">capturas</p>
                       </div>
                       <div className="text-center hidden sm:block">
-                        <p className="text-lg font-bold">{duo.mejorPieza} cm</p>
+                        <p className="text-lg font-bold">{pescador.mejorPieza} cm</p>
                         <p className="text-xs text-muted-foreground">mejor pieza</p>
                       </div>
                       <div className="text-center">
                         <p className="text-2xl font-bold text-primary">
-                          {duo.totalPuntos.toLocaleString("es-ES")}
+                          {pescador.totalPuntos.toLocaleString("es-ES")}
                         </p>
                         <p className="text-xs text-muted-foreground">puntos</p>
                       </div>
@@ -173,26 +168,24 @@ export default function ClasificacionPage() {
       {!isLoading && clasificacion.length > 10 && (
         <div className="space-y-1">
           <p className="text-sm font-semibold text-muted-foreground px-2">Resto de clasificación</p>
-          {clasificacion.slice(10).map((duo, idx) => (
+          {clasificacion.slice(10).map((pescador, idx) => (
             <div
-              key={duo.duoId}
+              key={pescador.pescadorId}
               className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
             >
               <span className="w-8 text-center text-sm font-medium text-muted-foreground">
                 {idx + 11}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{duo.nombreDuo}</p>
-                <p className="text-xs text-muted-foreground">
-                  {duo.pescador1} · {duo.pescador2}
-                </p>
+                <p className="text-sm font-medium truncate">{pescador.nombre}</p>
+                <p className="text-xs text-muted-foreground">{pescador.club}</p>
               </div>
               <div className="flex items-center gap-4">
                 <Badge variant="success" className="text-xs">
-                  {duo.capturasValidas} cap.
+                  {pescador.capturasValidas} cap.
                 </Badge>
                 <span className="text-sm font-bold text-primary">
-                  {duo.totalPuntos.toLocaleString("es-ES")} pts
+                  {pescador.totalPuntos.toLocaleString("es-ES")} pts
                 </span>
               </div>
             </div>

@@ -1,10 +1,10 @@
 import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import type { DuoStats, CatchRecord, MangaStats } from "@/types";
+import type { PescadorStats, CatchRecord, MangaStats } from "@/types";
 
-interface CatchWithDuo extends CatchRecord {
-  nombreDuo: string;
+interface CatchWithPescador extends CatchRecord {
+  nombre: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -34,29 +34,29 @@ function applyHeaderStyle(ws: XLSX.WorkSheet, headerRow: number, colCount: numbe
 // ─── Export ───────────────────────────────────────────────────────────────────
 
 export function generarExcelResultados(
-  clasificacion: DuoStats[],
+  clasificacion: PescadorStats[],
   mangaStats: MangaStats[],
-  capturas: CatchWithDuo[]
+  capturas: CatchWithPescador[]
 ): Blob {
   const wb = XLSX.utils.book_new();
 
   // ── Hoja 1: Clasificación General ─────────────────────────────────────────
   const clasificacionHeaders = [
-    "Posición", "Dúo", "Pescador 1", "Pescador 2", "Plica",
-    "Tramo", "Río", "Capturas Válidas", "< 18 cm", "Total cm", "Puntos Totales",
+    "Posición", "Pescador", "Club", "Plica",
+    "Tramo", "Río", "Capturas Válidas", "< 18 cm", "Total cm", "Mejor Pieza", "Puntos Totales",
   ];
-  const clasificacionData = clasificacion.map((d) => [
-    String(d.posicion ?? ""),
-    d.nombreDuo,
-    d.pescador1,
-    d.pescador2,
-    d.plica,
-    d.tramo,
-    d.rio,
-    String(d.capturasValidas),
-    String(d.capturasMenores18),
-    d.totalCm.toFixed(1),
-    String(d.totalPuntos),
+  const clasificacionData = clasificacion.map((p) => [
+    String(p.posicion ?? ""),
+    p.nombre,
+    p.club,
+    p.plica,
+    p.tramo,
+    p.rio,
+    String(p.capturasValidas),
+    String(p.capturasMenores18),
+    p.totalCm.toFixed(1),
+    `${p.mejorPieza} cm`,
+    String(p.totalPuntos),
   ]);
 
   const ws1Data = [clasificacionHeaders, ...clasificacionData];
@@ -68,11 +68,11 @@ export function generarExcelResultados(
 
   // ── Hoja 2: Resultados por Manga ───────────────────────────────────────────
   const mangaHeaders = [
-    "Manga", "Dúos Participantes", "Total Capturas", "Capturas Válidas", "Total Puntos",
+    "Manga", "Pescadores Participantes", "Total Capturas", "Capturas Válidas", "Total Puntos",
   ];
   const mangaData = mangaStats.map((m) => [
     `Manga ${m.manga}`,
-    String(m.duosParticipantes),
+    String(m.pescadoresParticipantes),
     String(m.totalCapturas),
     String(m.capturasValidas),
     String(m.totalPuntos),
@@ -86,12 +86,12 @@ export function generarExcelResultados(
 
   // ── Hoja 3: Capturas Detalladas ────────────────────────────────────────────
   const capturaHeaders = [
-    "ID", "Dúo", "Manga", "Tramo", "Río",
+    "ID", "Pescador", "Manga", "Tramo", "Río",
     "Longitud (cm)", "Puntos", "Válida", "Hora", "Observaciones", "Fecha Registro",
   ];
   const capturaData = capturas.map((c) => [
     c.id.substring(0, 8),
-    c.nombreDuo,
+    c.nombre,
     String(c.manga),
     c.tramo,
     c.rio,
@@ -111,27 +111,28 @@ export function generarExcelResultados(
   XLSX.utils.book_append_sheet(wb, ws3, "Capturas Detalladas");
 
   // ── Hoja 4: Estadísticas ───────────────────────────────────────────────────
-  const totalPuntos = clasificacion.reduce((s, d) => s + d.totalPuntos, 0);
-  const totalCapturas = clasificacion.reduce((s, d) => s + d.totalCapturas, 0);
-  const mejorPieza = Math.max(...clasificacion.map((d) => d.mejorPieza), 0);
-  const mejorDuo = clasificacion[0];
+  const totalPuntos = clasificacion.reduce((s, p) => s + p.totalPuntos, 0);
+  const totalCapturas = clasificacion.reduce((s, p) => s + p.totalCapturas, 0);
+  const mejorPieza = Math.max(...clasificacion.map((p) => p.mejorPieza), 0);
+  const lider = clasificacion[0];
 
   const statsData = [
     ["Estadísticas del Campeonato", ""],
     ["Fecha de exportación", format(new Date(), "dd/MM/yyyy HH:mm", { locale: es })],
     ["", ""],
-    ["Total de dúos participantes", String(clasificacion.length)],
+    ["Total de pescadores participantes", String(clasificacion.length)],
     ["Total de capturas válidas", String(totalCapturas)],
     ["Total de puntos acumulados", String(totalPuntos)],
     ["Mejor pieza (cm)", String(mejorPieza)],
     ["", ""],
-    ["Dúo líder", mejorDuo?.nombreDuo ?? "N/A"],
-    ["Puntos del líder", String(mejorDuo?.totalPuntos ?? 0)],
-    ["Capturas válidas del líder", String(mejorDuo?.capturasValidas ?? 0)],
+    ["Líder", lider?.nombre ?? "N/A"],
+    ["Club del líder", lider?.club ?? "N/A"],
+    ["Puntos del líder", String(lider?.totalPuntos ?? 0)],
+    ["Capturas válidas del líder", String(lider?.capturasValidas ?? 0)],
   ];
 
   const ws4 = XLSX.utils.aoa_to_sheet(statsData);
-  ws4["!cols"] = [{ wch: 35 }, { wch: 25 }];
+  ws4["!cols"] = [{ wch: 38 }, { wch: 25 }];
   XLSX.utils.book_append_sheet(wb, ws4, "Estadísticas");
 
   // ── Generar buffer ─────────────────────────────────────────────────────────
@@ -150,16 +151,15 @@ export function getExcelFilename(): string {
 
 // ─── Import from Excel ────────────────────────────────────────────────────────
 
-export interface ImportedDuoRow {
-  nombreDuo: string;
-  pescador1: string;
-  pescador2: string;
+export interface ImportedParticipanteRow {
+  nombre: string;
   plica: string;
+  club: string;
   tramo: string;
   rio: string;
 }
 
-export function parseDuosFromExcel(buffer: ArrayBuffer): ImportedDuoRow[] {
+export function parseParticipantesFromExcel(buffer: ArrayBuffer): ImportedParticipanteRow[] {
   const wb = XLSX.read(buffer, { type: "array" });
   const ws = wb.Sheets[wb.SheetNames[0]];
   if (!ws) throw new Error("El archivo Excel no contiene hojas");
@@ -170,10 +170,9 @@ export function parseDuosFromExcel(buffer: ArrayBuffer): ImportedDuoRow[] {
   });
 
   return rows.map((row) => ({
-    nombreDuo: String(row["Nombre Dúo"] ?? row["nombreDuo"] ?? "").trim(),
-    pescador1: String(row["Pescador 1"] ?? row["pescador1"] ?? "").trim(),
-    pescador2: String(row["Pescador 2"] ?? row["pescador2"] ?? "").trim(),
+    nombre: String(row["Nombre"] ?? row["nombre"] ?? "").trim(),
     plica: String(row["Plica"] ?? row["plica"] ?? "").trim(),
+    club: String(row["Club"] ?? row["club"] ?? "").trim(),
     tramo: String(row["Tramo"] ?? row["tramo"] ?? "").trim(),
     rio: String(row["Río"] ?? row["Rio"] ?? row["rio"] ?? "").trim(),
   }));

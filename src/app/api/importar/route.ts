@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createDuo } from "@/lib/db";
-import { parseDuosFromExcel } from "@/lib/excel";
-import { createDuoSchema } from "@/lib/validations";
+import { createParticipante } from "@/lib/db";
+import { parseParticipantesFromExcel } from "@/lib/excel";
+import { createParticipanteSchema } from "@/lib/validations";
 import type { ImportResult } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -16,13 +16,13 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = await file.arrayBuffer();
-    const rows = parseDuosFromExcel(buffer);
+    const rows = parseParticipantesFromExcel(buffer);
 
     const result: ImportResult = { success: 0, errors: [] };
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const parsed = createDuoSchema.safeParse(row);
+      const parsed = createParticipanteSchema.safeParse(row);
 
       if (!parsed.success) {
         result.errors.push({
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       }
 
       try {
-        await createDuo(parsed.data);
+        await createParticipante(parsed.data);
         result.success++;
       } catch (err) {
         result.errors.push({

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { getExcelFilename } from "@/lib/excel";
 import { useClasificacion } from "./use-stats";
-import type { DuoStats } from "@/types";
+import type { PescadorStats } from "@/types";
 import { generarPDFClasificacion } from "@/lib/pdf";
 
 export function useExport() {
@@ -31,7 +31,7 @@ export function useExport() {
 
   const exportarPDF = () => {
     if (!clasificacion || clasificacion.length === 0) return;
-    generarPDFClasificacion(clasificacion as DuoStats[]);
+    generarPDFClasificacion(clasificacion as PescadorStats[]);
   };
 
   return { exportarExcel, exportarPDF, isExporting };

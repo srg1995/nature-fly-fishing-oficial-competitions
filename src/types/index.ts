@@ -14,26 +14,25 @@ export interface UserWithPassword extends User {
   passwordHash: string;
 }
 
-// ─── Participant Duo ───────────────────────────────────────────────────────────
-export interface ParticipantDuo {
+// ─── Participante Individual ───────────────────────────────────────────────────
+export interface Participante {
   id: string;
-  nombreDuo: string;
-  pescador1: string;
-  pescador2: string;
+  nombre: string;
   plica: string;
+  club: string;
   tramo: string;
   rio: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type CreateDuoInput = Omit<ParticipantDuo, "id" | "createdAt" | "updatedAt">;
-export type UpdateDuoInput = Partial<CreateDuoInput>;
+export type CreateParticipanteInput = Omit<Participante, "id" | "createdAt" | "updatedAt">;
+export type UpdateParticipanteInput = Partial<CreateParticipanteInput>;
 
 // ─── Catch Session ─────────────────────────────────────────────────────────────
 export interface CatchSession {
   id: string;
-  duoId: string;
+  pescadorId: string;
   manga: number;
   horaInicio: string | null;
   horaFin: string | null;
@@ -46,7 +45,7 @@ export type CreateSessionInput = Omit<CatchSession, "id" | "createdAt">;
 // ─── Catch Record ──────────────────────────────────────────────────────────────
 export interface CatchRecord {
   id: string;
-  duoId: string;
+  pescadorId: string;
   sessionId: string | null;
   manga: number;
   tramo: string;
@@ -77,12 +76,11 @@ export interface AuditEntry {
 }
 
 // ─── Rankings & Stats ─────────────────────────────────────────────────────────
-export interface DuoStats {
-  duoId: string;
-  nombreDuo: string;
-  pescador1: string;
-  pescador2: string;
+export interface PescadorStats {
+  pescadorId: string;
+  nombre: string;
   plica: string;
+  club: string;
   tramo: string;
   rio: string;
   totalCapturas: number;
@@ -99,30 +97,28 @@ export interface MangaStats {
   totalCapturas: number;
   capturasValidas: number;
   totalPuntos: number;
-  duosParticipantes: number;
+  pescadoresParticipantes: number;
 }
 
 export interface DashboardStats {
-  totalDuos: number;
+  totalPescadores: number;
   totalCapturas: number;
   totalPuntos: number;
   mangasActivas: number;
-  topDuos: DuoStats[];
+  topPescadores: PescadorStats[];
   recentCatches: RecentCatch[];
   bestFish: BestFish[];
 }
 
 export interface RecentCatch extends CatchRecord {
-  nombreDuo: string;
-  pescador1: string;
-  pescador2: string;
+  nombre: string;
 }
 
 export interface BestFish {
   id: string;
   longitudCm: number;
   puntos: number;
-  nombreDuo: string;
+  nombre: string;
   manga: number;
   hora: string | null;
   createdAt: Date;
@@ -169,11 +165,10 @@ export interface LoginInput {
 }
 
 // ─── Excel Import ─────────────────────────────────────────────────────────────
-export interface ImportDuoRow {
-  nombreDuo: string;
-  pescador1: string;
-  pescador2: string;
+export interface ImportParticipanteRow {
+  nombre: string;
   plica: string;
+  club: string;
   tramo: string;
   rio: string;
 }

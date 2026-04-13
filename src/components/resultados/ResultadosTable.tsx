@@ -27,11 +27,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { DuoStats } from "@/types";
+import type { PescadorStats } from "@/types";
 import { cn } from "@/lib/utils";
 
 interface ResultadosTableProps {
-  data: DuoStats[];
+  data: PescadorStats[];
   isLoading?: boolean;
 }
 
@@ -50,7 +50,7 @@ export function ResultadosTable({ data, isLoading }: ResultadosTableProps) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  const columns = useMemo<ColumnDef<DuoStats>[]>(
+  const columns = useMemo<ColumnDef<PescadorStats>[]>(
     () => [
       {
         id: "posicion",
@@ -72,7 +72,7 @@ export function ResultadosTable({ data, isLoading }: ResultadosTableProps) {
         size: 60,
       },
       {
-        accessorKey: "nombreDuo",
+        accessorKey: "nombre",
         header: ({ column }) => (
           <Button
             variant="ghost"
@@ -80,7 +80,7 @@ export function ResultadosTable({ data, isLoading }: ResultadosTableProps) {
             className="-ml-3"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Dúo
+            Pescador
             {column.getIsSorted() === "asc" ? (
               <ArrowUp className="ml-1 h-3 w-3" />
             ) : column.getIsSorted() === "desc" ? (
@@ -92,10 +92,8 @@ export function ResultadosTable({ data, isLoading }: ResultadosTableProps) {
         ),
         cell: ({ row }) => (
           <div>
-            <p className="font-semibold">{row.original.nombreDuo}</p>
-            <p className="text-xs text-muted-foreground">
-              {row.original.pescador1} · {row.original.pescador2}
-            </p>
+            <p className="font-semibold">{row.original.nombre}</p>
+            <p className="text-xs text-muted-foreground">{row.original.club}</p>
           </div>
         ),
       },
@@ -104,7 +102,7 @@ export function ResultadosTable({ data, isLoading }: ResultadosTableProps) {
         header: "Plica",
         cell: ({ getValue }) => {
           const v = getValue<string>();
-          return v ? <Badge variant="outline" className="font-mono">{v}</Badge> : "—";
+          return v ? <Badge variant="outline" className="font-mono">#{v}</Badge> : "—";
         },
       },
       {
@@ -198,7 +196,7 @@ export function ResultadosTable({ data, isLoading }: ResultadosTableProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             className="pl-9"
-            placeholder="Buscar dúo, pescador, tramo…"
+            placeholder="Buscar pescador, club, tramo…"
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
           />
@@ -282,7 +280,7 @@ export function ResultadosTable({ data, isLoading }: ResultadosTableProps) {
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {table.getFilteredRowModel().rows.length} dúos
+          {table.getFilteredRowModel().rows.length} pescadores
         </p>
         <div className="flex items-center gap-2">
           <Button

@@ -18,7 +18,7 @@ export default function DashboardPage() {
         <div>
           <h2 className="text-2xl font-bold">VI Campeonato Nacional</h2>
           <p className="text-muted-foreground text-sm mt-0.5">
-            Salmónidos Lance Mosca Dúos — Captura y Suelta Absoluta
+            Salmónidos Lance Mosca — Clasificación Individual · Captura y Suelta Absoluta
           </p>
         </div>
         <Button
@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <StatsCards
-        totalDuos={data?.totalDuos ?? 0}
+        totalPescadores={data?.totalPescadores ?? 0}
         totalCapturas={data?.totalCapturas ?? 0}
         totalPuntos={data?.totalPuntos ?? 0}
         mangasActivas={data?.mangasActivas ?? 0}
@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <LiveRanking duos={data?.topDuos ?? []} isLoading={isLoading} />
+        <LiveRanking pescadores={data?.topPescadores ?? []} isLoading={isLoading} />
         <TopFish fish={data?.bestFish ?? []} isLoading={isLoading} />
       </div>
 

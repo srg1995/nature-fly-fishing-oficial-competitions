@@ -8,14 +8,14 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const duoId = searchParams.get("duoId") ?? undefined;
+    const pescadorId = searchParams.get("pescadorId") ?? undefined;
     const manga = searchParams.get("manga") ? Number(searchParams.get("manga")) : undefined;
     const valida =
       searchParams.get("valida") !== null
         ? searchParams.get("valida") === "true"
         : undefined;
 
-    const catches = await getCatches({ duoId, manga, valida });
+    const catches = await getCatches({ pescadorId, manga, valida });
     return NextResponse.json({ data: catches });
   } catch (error) {
     console.error("Error fetching catches:", error);

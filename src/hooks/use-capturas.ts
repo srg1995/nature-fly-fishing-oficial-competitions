@@ -6,12 +6,12 @@ import type { CatchRecord, CreateCatchInput, UpdateCatchInput } from "@/types";
 const CAPTURAS_KEY = ["capturas"] as const;
 
 async function fetchCapturas(filters?: {
-  duoId?: string;
+  pescadorId?: string;
   manga?: number;
   valida?: boolean;
 }): Promise<CatchRecord[]> {
   const params = new URLSearchParams();
-  if (filters?.duoId) params.set("duoId", filters.duoId);
+  if (filters?.pescadorId) params.set("pescadorId", filters.pescadorId);
   if (filters?.manga !== undefined) params.set("manga", String(filters.manga));
   if (filters?.valida !== undefined) params.set("valida", String(filters.valida));
 
@@ -57,7 +57,7 @@ async function deleteCapturaFn(id: string): Promise<void> {
   }
 }
 
-export function useCapturas(filters?: { duoId?: string; manga?: number; valida?: boolean }) {
+export function useCapturas(filters?: { pescadorId?: string; manga?: number; valida?: boolean }) {
   return useQuery({
     queryKey: [...CAPTURAS_KEY, filters],
     queryFn: () => fetchCapturas(filters),

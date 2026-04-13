@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface StatsCardsProps {
-  totalDuos: number;
+  totalPescadores: number;
   totalCapturas: number;
   totalPuntos: number;
   mangasActivas: number;
@@ -46,12 +46,12 @@ function StatCard({ label, value, icon: Icon, color, bg, isLoading }: StatCardPr
 }
 
 export function StatsCards({
-  totalDuos, totalCapturas, totalPuntos, mangasActivas, isLoading,
+  totalPescadores, totalCapturas, totalPuntos, mangasActivas, isLoading,
 }: StatsCardsProps) {
   const stats = [
     {
-      label: "Dúos Participantes",
-      value: totalDuos,
+      label: "Pescadores",
+      value: totalPescadores,
       icon: Users,
       color: "text-river-600 dark:text-river-400",
       bg: "bg-river-100 dark:bg-river-900/30",

@@ -1,38 +1,40 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { DuoStats, MangaStats, RecentCatch, BestFish } from "@/types";
+import {
+  MOCK_STATS_RESPONSE,
+  MOCK_CLASIFICACION,
+} from "@/lib/mock-data";
+import type { PescadorStats, MangaStats, RecentCatch, BestFish } from "@/types";
 
-interface StatsResponse {
-  totalDuos: number;
+export interface StatsResponse {
+  totalPescadores: number;
   totalCapturas: number;
   totalPuntos: number;
   mangasActivas: number;
-  topDuos: DuoStats[];
+  topPescadores: PescadorStats[];
   mangaStats: MangaStats[];
   recentCatches: RecentCatch[];
   bestFish: BestFish[];
 }
 
 async function fetchStats(): Promise<StatsResponse> {
-  const res = await fetch("/api/stats");
-  if (!res.ok) throw new Error("Error al cargar las estadísticas");
-  const json = (await res.json()) as { data: StatsResponse };
-  return json.data;
+  // TODO: reemplazar por fetch("/api/stats") cuando la BD esté conectada
+  await new Promise((resolve) => setTimeout(resolve, 400)); // simula latencia
+  return MOCK_STATS_RESPONSE;
 }
 
-async function fetchClasificacion(): Promise<DuoStats[]> {
-  const res = await fetch("/api/clasificacion");
-  if (!res.ok) throw new Error("Error al cargar la clasificación");
-  const json = (await res.json()) as { data: DuoStats[] };
-  return json.data;
+async function fetchClasificacion(): Promise<PescadorStats[]> {
+  // TODO: reemplazar por fetch("/api/clasificacion") cuando la BD esté conectada
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  return MOCK_CLASIFICACION;
 }
 
 export function useStats() {
   return useQuery({
     queryKey: ["stats"],
     queryFn: fetchStats,
-    refetchInterval: 30_000, // Auto-refresh every 30 seconds
+    refetchInterval: 30_000,
   });
 }
 

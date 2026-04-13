@@ -43,7 +43,7 @@ export function RecentCatches({ catches, isLoading }: RecentCatchesProps) {
                   className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                 >
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{c.nombreDuo}</p>
+                    <p className="text-sm font-medium truncate">{c.nombre}</p>
                     <p className="text-xs text-muted-foreground">
                       Manga {c.manga} · {formatTime(c.hora)}
                     </p>

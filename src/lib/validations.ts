@@ -1,18 +1,17 @@
 import { z } from "zod";
 
-export const createDuoSchema = z.object({
-  nombreDuo: z.string().min(2, "El nombre del dúo debe tener al menos 2 caracteres").max(100),
-  pescador1: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
-  pescador2: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
+export const createParticipanteSchema = z.object({
+  nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
   plica: z.string().max(50).default(""),
+  club: z.string().max(100).default(""),
   tramo: z.string().max(100).default(""),
   rio: z.string().max(100).default(""),
 });
 
-export const updateDuoSchema = createDuoSchema.partial();
+export const updateParticipanteSchema = createParticipanteSchema.partial();
 
 export const createCatchSchema = z.object({
-  duoId: z.string().uuid("ID de dúo inválido"),
+  pescadorId: z.string().uuid("ID de pescador inválido"),
   sessionId: z.string().uuid().nullable().optional(),
   manga: z.number().int().min(1, "La manga debe ser al menos 1").max(10),
   tramo: z.string().max(100).default(""),
@@ -34,7 +33,7 @@ export const createCatchSchema = z.object({
 export const updateCatchSchema = createCatchSchema.partial();
 
 export const createSessionSchema = z.object({
-  duoId: z.string().uuid("ID de dúo inválido"),
+  pescadorId: z.string().uuid("ID de pescador inválido"),
   manga: z.number().int().min(1).max(10),
   horaInicio: z
     .string()
@@ -61,8 +60,8 @@ export const createUserSchema = z.object({
   rol: z.enum(["admin", "organizador", "juez"]).default("juez"),
 });
 
-export type CreateDuoFormValues = z.infer<typeof createDuoSchema>;
-export type UpdateDuoFormValues = z.infer<typeof updateDuoSchema>;
+export type CreateParticipanteFormValues = z.infer<typeof createParticipanteSchema>;
+export type UpdateParticipanteFormValues = z.infer<typeof updateParticipanteSchema>;
 export type CreateCatchFormValues = z.infer<typeof createCatchSchema>;
 export type UpdateCatchFormValues = z.infer<typeof updateCatchSchema>;
 export type CreateSessionFormValues = z.infer<typeof createSessionSchema>;

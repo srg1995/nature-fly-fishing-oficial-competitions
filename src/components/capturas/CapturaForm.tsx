@@ -16,19 +16,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PuntosDisplay } from "./PuntosDisplay";
-import type { ParticipantDuo } from "@/types";
+import type { Participante } from "@/types";
 
 interface CapturaFormProps {
-  duos: ParticipantDuo[];
-  defaultDuoId?: string;
+  participantes: Participante[];
+  defaultPescadorId?: string;
   defaultManga?: number;
   onSubmit: (data: CreateCatchFormValues) => Promise<void>;
   isLoading?: boolean;
 }
 
 export function CapturaForm({
-  duos,
-  defaultDuoId,
+  participantes,
+  defaultPescadorId,
   defaultManga,
   onSubmit,
   isLoading,
@@ -45,7 +45,7 @@ export function CapturaForm({
   } = useForm<CreateCatchFormValues>({
     resolver: zodResolver(createCatchSchema),
     defaultValues: {
-      duoId: defaultDuoId ?? "",
+      pescadorId: defaultPescadorId ?? "",
       manga: defaultManga ?? 1,
       tramo: "",
       rio: "",
@@ -69,36 +69,38 @@ export function CapturaForm({
     setLongitudPreview(null);
   };
 
-  const selectedDuo = duos.find((d) => d.id === watch("duoId"));
+  const selectedPescador = participantes.find((p) => p.id === watch("pescadorId"));
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
-      {/* Dúo selection */}
+      {/* Pescador selection */}
       <div className="space-y-1.5">
-        <Label>Dúo *</Label>
+        <Label>Pescador *</Label>
         <Select
-          value={watch("duoId")}
-          onValueChange={(val) => setValue("duoId", val)}
+          value={watch("pescadorId")}
+          onValueChange={(val) => setValue("pescadorId", val)}
         >
           <SelectTrigger className="h-12 text-base">
-            <SelectValue placeholder="Seleccionar dúo…" />
+            <SelectValue placeholder="Seleccionar pescador…" />
           </SelectTrigger>
           <SelectContent>
-            {duos.map((d) => (
-              <SelectItem key={d.id} value={d.id}>
-                <span className="font-medium">{d.nombreDuo}</span>
+            {participantes.map((p) => (
+              <SelectItem key={p.id} value={p.id}>
+                <span className="font-medium">{p.nombre}</span>
                 <span className="text-muted-foreground ml-2 text-xs">
-                  ({d.pescador1} · {d.pescador2})
+                  #{p.plica} · {p.club}
                 </span>
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        {errors.duoId && <p className="text-xs text-destructive">{errors.duoId.message}</p>}
-        {selectedDuo && (
+        {errors.pescadorId && (
+          <p className="text-xs text-destructive">{errors.pescadorId.message}</p>
+        )}
+        {selectedPescador && (
           <p className="text-xs text-muted-foreground">
-            Plica: <strong>{selectedDuo.plica || "—"}</strong> · Tramo:{" "}
-            <strong>{selectedDuo.tramo || "—"}</strong>
+            Plica: <strong>{selectedPescador.plica || "—"}</strong> · Tramo:{" "}
+            <strong>{selectedPescador.tramo || "—"}</strong>
           </p>
         )}
       </div>
