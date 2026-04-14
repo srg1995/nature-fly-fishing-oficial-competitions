@@ -20,6 +20,7 @@ export interface Participante {
   nombre: string;
   plica: string;
   club: string;
+  turno: "A" | "B";
   tramo: string;
   rio: string;
   createdAt: Date;
@@ -76,24 +77,35 @@ export interface AuditEntry {
 }
 
 // ─── Rankings & Stats ─────────────────────────────────────────────────────────
+export interface MangaResult {
+  tallasEnCm: number[];
+  puntos: number;
+  posicion: number;
+}
+
 export interface PescadorStats {
   pescadorId: string;
   nombre: string;
   plica: string;
   club: string;
+  turno: "A" | "B";
   tramo: string;
   rio: string;
   totalCapturas: number;
   capturasValidas: number;
-  capturasMenores18: number;
+  capturasMenores19: number;
   totalCm: number;
   totalPuntos: number;
   mejorPieza: number;
   posicion?: number;
+  mangaResultados?: Record<number, MangaResult>;
 }
 
 export interface MangaStats {
   manga: number;
+  dia: 1 | 2;
+  sesion: "mañana" | "tarde";
+  turno: "A" | "B";
   totalCapturas: number;
   capturasValidas: number;
   totalPuntos: number;

@@ -27,7 +27,7 @@ export function generarPDFClasificacion(clasificacion: PescadorStats[]): void {
   autoTable(doc, {
     startY: 42,
     head: [
-      ["Pos.", "Pescador", "Club", "Plica", "Tramo", "Cap. Válidas", "< 18cm", "Total cm", "Mejor Pieza", "Puntos"],
+      ["Pos.", "Pescador", "Club", "Plica", "Tramo", "Cap. Válidas", "< 19cm", "Total cm", "Mejor Pieza", "Puntos"],
     ],
     body: clasificacion.map((p) => [
       String(p.posicion ?? ""),
@@ -36,7 +36,7 @@ export function generarPDFClasificacion(clasificacion: PescadorStats[]): void {
       p.plica,
       p.tramo,
       String(p.capturasValidas),
-      String(p.capturasMenores18),
+      String(p.capturasMenores19),
       p.totalCm.toFixed(1),
       `${p.mejorPieza} cm`,
       String(p.totalPuntos),

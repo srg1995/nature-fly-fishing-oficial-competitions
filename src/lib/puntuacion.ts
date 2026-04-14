@@ -1,11 +1,11 @@
 /**
  * Sistema de puntuación para el Campeonato Nacional de Salmónidos Lance Mosca Dúos
  *
- * Truchas válidas (>= 18 cm): 100 + (longitud × 20)
- * Truchas menores de 18 cm: 15 puntos fijos
+ * Truchas válidas (>= 19 cm): 100 + (longitud × 20)
+ * Truchas menores de 19 cm: 15 puntos fijos
  */
 
-export const LONGITUD_MINIMA_VALIDA = 18;
+export const LONGITUD_MINIMA_VALIDA = 19;
 export const PUNTOS_CAPTURA_PEQUEÑA = 15;
 export const PUNTOS_BASE = 100;
 export const PUNTOS_POR_CM = 20;
