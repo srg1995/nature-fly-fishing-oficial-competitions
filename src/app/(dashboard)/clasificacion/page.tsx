@@ -56,6 +56,13 @@ export default function ClasificacionPage() {
               <CardContent className="p-4 text-center">
                 <p className="font-bold">{top10[1].nombre}</p>
                 <p className="text-xs text-muted-foreground">{top10[1].club}</p>
+                <p className="text-sm text-muted-foreground">
+                  {top10[1].capturasValidas}
+                  {top10[1].capturasMenores19 > 0 && (
+                    <span className="text-orange-500"> (+{top10[1].capturasMenores19})</span>
+                  )}
+                  {" "}capturas
+                </p>
                 <p className="text-2xl font-bold text-primary mt-2">
                   {top10[1].totalPuntos.toLocaleString("es-ES")}
                 </p>
@@ -72,6 +79,13 @@ export default function ClasificacionPage() {
                 <Badge className="mb-1 bg-amber-400 text-amber-900 border-0">Líder</Badge>
                 <p className="font-bold text-lg">{top10[0].nombre}</p>
                 <p className="text-xs text-muted-foreground">{top10[0].club}</p>
+                <p className="text-sm text-muted-foreground">
+                  {top10[0].capturasValidas}
+                  {top10[0].capturasMenores19 > 0 && (
+                    <span className="text-orange-500"> (+{top10[0].capturasMenores19})</span>
+                  )}
+                  {" "}capturas
+                </p>
                 <p className="text-3xl font-bold text-primary mt-2">
                   {top10[0].totalPuntos.toLocaleString("es-ES")}
                 </p>
@@ -87,6 +101,13 @@ export default function ClasificacionPage() {
               <CardContent className="p-4 text-center">
                 <p className="font-bold">{top10[2].nombre}</p>
                 <p className="text-xs text-muted-foreground">{top10[2].club}</p>
+                <p className="text-sm text-muted-foreground">
+                  {top10[2].capturasValidas}
+                  {top10[2].capturasMenores19 > 0 && (
+                    <span className="text-orange-500"> (+{top10[2].capturasMenores19})</span>
+                  )}
+                  {" "}capturas
+                </p>
                 <p className="text-2xl font-bold text-primary mt-2">
                   {top10[2].totalPuntos.toLocaleString("es-ES")}
                 </p>
@@ -144,7 +165,14 @@ export default function ClasificacionPage() {
                     {/* Stats */}
                     <div className="flex items-center gap-6 flex-shrink-0">
                       <div className="text-center hidden sm:block">
-                        <p className="text-lg font-bold">{pescador.capturasValidas}</p>
+                        <p className="text-lg font-bold">
+                          {pescador.capturasValidas}
+                          {pescador.capturasMenores19 > 0 && (
+                            <span className="text-sm text-orange-500 ml-1">
+                              (+{pescador.capturasMenores19})
+                            </span>
+                          )}
+                        </p>
                         <p className="text-xs text-muted-foreground">capturas</p>
                       </div>
                       <div className="text-center hidden sm:block">
@@ -183,6 +211,9 @@ export default function ClasificacionPage() {
               <div className="flex items-center gap-4">
                 <Badge variant="success" className="text-xs">
                   {pescador.capturasValidas} cap.
+                  {pescador.capturasMenores19 > 0 && (
+                    <span className="ml-1">(+{pescador.capturasMenores19})</span>
+                  )}
                 </Badge>
                 <span className="text-sm font-bold text-primary">
                   {pescador.totalPuntos.toLocaleString("es-ES")} pts

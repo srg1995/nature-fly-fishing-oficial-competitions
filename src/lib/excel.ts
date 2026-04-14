@@ -40,10 +40,17 @@ export function generarExcelResultados(
 ): Blob {
   const wb = XLSX.utils.book_new();
 
+  // Propiedades del libro con información de FEPYC
+  wb.Props = {
+    Title: "VI Campeonato Nacional Salmónidos Lance Mosca Dúos",
+    Author: "FEPYC",
+    Subject: "Resultados del Campeonato de Pesca con Mosca",
+  };
+
   // ── Hoja 1: Clasificación General ─────────────────────────────────────────
   const clasificacionHeaders = [
     "Posición", "Pescador", "Club", "Plica",
-    "Tramo", "Río", "Capturas Válidas", "< 18 cm", "Total cm", "Mejor Pieza", "Puntos Totales",
+    "Tramo", "Río", "Capturas Válidas", "< 19 cm", "Total cm", "Mejor Pieza", "Puntos Totales",
   ];
   const clasificacionData = clasificacion.map((p) => [
     String(p.posicion ?? ""),
@@ -53,17 +60,32 @@ export function generarExcelResultados(
     p.tramo,
     p.rio,
     String(p.capturasValidas),
-    String(p.capturasMenores18),
+    String(p.capturasMenores19),
     p.totalCm.toFixed(1),
     `${p.mejorPieza} cm`,
     String(p.totalPuntos),
   ]);
 
-  const ws1Data = [clasificacionHeaders, ...clasificacionData];
+  const ws1Data = [
+    ["VI CAMPEONATO NACIONAL SALMÓNIDOS LANCE MOSCA DÚOS - FEPYC"],
+    [],
+    clasificacionHeaders,
+    ...clasificacionData
+  ];
   const ws1 = XLSX.utils.aoa_to_sheet(ws1Data);
   autoFitColumns(ws1, ws1Data);
-  ws1["!autofilter"] = { ref: `A1:K${ws1Data.length}` };
-  applyHeaderStyle(ws1, 0, clasificacionHeaders.length);
+  ws1["!autofilter"] = { ref: `A3:K${ws1Data.length}` };
+
+  // Estilo del título
+  ws1["A1"].s = {
+    font: { bold: true, size: 14, color: { rgb: "FFFFFF" } },
+    fill: { fgColor: { rgb: "0369A1" } },
+    alignment: { horizontal: "center", vertical: "center" },
+  };
+  ws1["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 10 } }];
+  ws1["!rows"] = [{ hpx: 25 }];
+
+  applyHeaderStyle(ws1, 2, clasificacionHeaders.length);
   XLSX.utils.book_append_sheet(wb, ws1, "Clasificación General");
 
   // ── Hoja 2: Resultados por Manga ───────────────────────────────────────────
@@ -117,6 +139,9 @@ export function generarExcelResultados(
   const lider = clasificacion[0];
 
   const statsData = [
+    ["VI CAMPEONATO NACIONAL SALMÓNIDOS LANCE MOSCA DÚOS"],
+    ["Federación de Pesca y Actividades Subacuáticas de Castilla y León (FEPYC)"],
+    [""],
     ["Estadísticas del Campeonato", ""],
     ["Fecha de exportación", format(new Date(), "dd/MM/yyyy HH:mm", { locale: es })],
     ["", ""],
@@ -133,6 +158,18 @@ export function generarExcelResultados(
 
   const ws4 = XLSX.utils.aoa_to_sheet(statsData);
   ws4["!cols"] = [{ wch: 38 }, { wch: 25 }];
+
+  // Estilos para títulos
+  ws4["A1"].s = {
+    font: { bold: true, size: 12, color: { rgb: "FFFFFF" } },
+    fill: { fgColor: { rgb: "0369A1" } },
+    alignment: { horizontal: "left", vertical: "center" },
+  };
+  ws4["A2"].s = {
+    font: { italic: true, size: 10, color: { rgb: "666666" } },
+    alignment: { horizontal: "left", vertical: "center" },
+  };
+
   XLSX.utils.book_append_sheet(wb, ws4, "Estadísticas");
 
   // ── Generar buffer ─────────────────────────────────────────────────────────

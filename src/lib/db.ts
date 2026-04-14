@@ -202,7 +202,7 @@ export async function getPescadorStats(): Promise<PescadorStats[]> {
       p.nombre, p.plica, p.club, p.tramo, p.rio,
       COUNT(c.id)::int AS "totalCapturas",
       COUNT(c.id) FILTER (WHERE c.valida = true)::int AS "capturasValidas",
-      COUNT(c.id) FILTER (WHERE c.valida = true AND c.longitud_cm < 18)::int AS "capturasMenores18",
+      COUNT(c.id) FILTER (WHERE c.valida = true AND c.longitud_cm < 19)::int AS "capturasMenores19",
       COALESCE(SUM(c.longitud_cm) FILTER (WHERE c.valida = true), 0)::float AS "totalCm",
       COALESCE(SUM(c.puntos) FILTER (WHERE c.valida = true), 0)::int AS "totalPuntos",
       COALESCE(MAX(c.longitud_cm) FILTER (WHERE c.valida = true), 0)::float AS "mejorPieza"
