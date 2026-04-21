@@ -1,0 +1,21 @@
+[
+  { "codigo": "01", "nombre": "Andalucía", "slug": "andalucia" },
+  { "codigo": "02", "nombre": "Aragón", "slug": "aragon" },
+  { "codigo": "03", "nombre": "Asturias, Principado de", "slug": "asturias" },
+  { "codigo": "04", "nombre": "Balears, Illes", "slug": "illes-balears" },
+  { "codigo": "05", "nombre": "Canarias", "slug": "canarias" },
+  { "codigo": "06", "nombre": "Cantabria", "slug": "cantabria" },
+  { "codigo": "07", "nombre": "Castilla y León", "slug": "castilla-y-leon" },
+  { "codigo": "08", "nombre": "Castilla-La Mancha", "slug": "castilla-la-mancha" },
+  { "codigo": "09", "nombre": "Cataluña", "slug": "cataluna" },
+  { "codigo": "10", "nombre": "Comunitat Valenciana", "slug": "comunitat-valenciana" },
+  { "codigo": "11", "nombre": "Extremadura", "slug": "extremadura" },
+  { "codigo": "12", "nombre": "Galicia", "slug": "galicia" },
+  { "codigo": "13", "nombre": "Madrid, Comunidad de", "slug": "madrid" },
+  { "codigo": "14", "nombre": "Murcia, Región de", "slug": "murcia" },
+  { "codigo": "15", "nombre": "Navarra, Comunidad Foral de", "slug": "navarra" },
+  { "codigo": "16", "nombre": "País Vasco", "slug": "pais-vasco" },
+  { "codigo": "17", "nombre": "Rioja, La", "slug": "la-rioja" },
+  { "codigo": "18", "nombre": "Ceuta", "slug": "ceuta" },
+  { "codigo": "19", "nombre": "Melilla", "slug": "melilla" }
+]
