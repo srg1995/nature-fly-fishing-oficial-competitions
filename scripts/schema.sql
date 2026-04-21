@@ -1,6 +1,10 @@
 -- ============================================================
+-- ⚠️ DEPRECATED. Canonical schema is in /drizzle/*.sql (managed via Drizzle).
+-- This file is kept for historical reference; do not run it against a new DB.
+-- Use:  bun db:migrate
+-- ============================================================
 -- VI Campeonato Nacional de Salmónidos Lance Mosca Dúos
--- Database Schema — Vercel Postgres
+-- Database Schema — Vercel Postgres (legacy)
 -- ============================================================
 
 -- Enable UUID generation

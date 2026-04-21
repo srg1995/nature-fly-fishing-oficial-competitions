@@ -1,5 +1,65 @@
 // ─── Roles ────────────────────────────────────────────────────────────────────
-export type UserRole = "admin" | "organizador" | "juez";
+export type UserRole = "super_admin" | "admin" | "organizador" | "juez";
+
+// ─── Geography ────────────────────────────────────────────────────────────────
+export interface ComunidadAutonoma {
+  id: number;
+  codigo: string;
+  nombre: string;
+  slug: string;
+  createdAt: Date;
+}
+
+export interface Provincia {
+  id: number;
+  codigo: string;
+  nombre: string;
+  slug: string;
+  comunidadAutonomaId: number;
+  createdAt: Date;
+}
+
+// ─── Competitions ─────────────────────────────────────────────────────────────
+export type NivelCompeticion = "nacional" | "autonomica" | "provincial";
+
+export type EstadoCompeticion =
+  | "borrador"
+  | "publicada"
+  | "en_curso"
+  | "finalizada"
+  | "archivada";
+
+export interface Competition {
+  id: string;
+  slug: string;
+  nombre: string;
+  edicion: string;
+  modalidad: string;
+  nivel: NivelCompeticion;
+  comunidadAutonomaId: number | null;
+  provinciaId: number | null;
+  estado: EstadoCompeticion;
+  fechaInicio: string;
+  fechaFin: string;
+  lugar: string;
+  organizador: string;
+  organizadorUserId: string | null;
+  totalMangas: number;
+  minimaLongitud: number;
+  rios: string[];
+  tramos: string[];
+  descripcion: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type CreateCompetitionInput = Omit<
+  Competition,
+  "id" | "createdAt" | "updatedAt"
+>;
+export type UpdateCompetitionInput = Partial<
+  Omit<Competition, "id" | "slug" | "createdAt" | "updatedAt">
+>;
 
 // ─── User ─────────────────────────────────────────────────────────────────────
 export interface User {
