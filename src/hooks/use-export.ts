@@ -6,14 +6,14 @@ import { useClasificacion } from "./use-stats";
 import type { PescadorStats } from "@/types";
 import { generarPDFClasificacion } from "@/lib/pdf";
 
-export function useExport() {
+export function useExport(competitionId: string) {
   const [isExporting, setIsExporting] = useState(false);
-  const { data: clasificacion } = useClasificacion();
+  const { data: clasificacion } = useClasificacion(competitionId);
 
   const exportarExcel = async () => {
     setIsExporting(true);
     try {
-      const res = await fetch("/api/exportar");
+      const res = await fetch(`/api/competiciones/${competitionId}/exportar`);
       if (!res.ok) throw new Error("Error al generar el Excel");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);

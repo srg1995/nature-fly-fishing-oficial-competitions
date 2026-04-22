@@ -12,7 +12,24 @@
       "Bash(gh repo:*)",
       "Bash(bun dev:*)",
       "Bash(git commit -m 'fix: remove deprecated experimental.serverActions from next.config:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Read(//tmp/**)",
+      "Bash(pkill -f \"node.*next\")",
+      "Read(//private/tmp/**)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(git checkout:*)",
+      "Bash(git commit -m 'feat: cambiar umbral mínimo de trucha a 19 cm:*)",
+      "Bash(gh pr create --title 'Cambiar umbral mínimo de trucha a 19 cm' --body ':*)",
+      "Bash(xargs ls:*)",
+      "Bash(grep -r \"const MANGAS\\\\|export.*MANGAS\\\\|COMPETITION\\\\|competition\" /Users/sergio/Desktop/PROYECTOS/NEXT/nature-fly-fishing-oficial-competitions/.claude/worktrees/pedantic-panini/src/lib/*.ts)",
+      "Bash(wc -l /Users/sergio/Desktop/PROYECTOS/NEXT/nature-fly-fishing-oficial-competitions/.claude/worktrees/pedantic-panini/src/app/api/*/route.ts)",
+      "Bash(gh pr create --base main --head claude/pedantic-panini --title 'Fase 0 — Fundaciones multi-competición \\(Drizzle + geografía\\)' --body ':*)",
+      "Bash(wc -l src/app/api/capturas/route.ts src/app/api/capturas/[id]/route.ts src/app/api/clasificacion/route.ts src/app/api/stats/route.ts src/app/api/audit/route.ts src/app/api/usuarios/route.ts src/app/api/importar/route.ts src/app/api/exportar/route.ts)",
+      "Bash(git fetch:*)",
+      "Bash(git rebase:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

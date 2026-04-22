@@ -1,10 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  MOCK_STATS_RESPONSE,
-  MOCK_CLASIFICACION,
-} from "@/lib/mock-data";
 import type { PescadorStats, MangaStats, RecentCatch, BestFish } from "@/types";
 
 export interface StatsResponse {
@@ -18,30 +14,34 @@ export interface StatsResponse {
   bestFish: BestFish[];
 }
 
-async function fetchStats(): Promise<StatsResponse> {
-  // TODO: reemplazar por fetch("/api/stats") cuando la BD esté conectada
-  await new Promise((resolve) => setTimeout(resolve, 400)); // simula latencia
-  return MOCK_STATS_RESPONSE;
+async function fetchStats(competitionId: string): Promise<StatsResponse> {
+  const res = await fetch(`/api/competiciones/${competitionId}/stats`);
+  if (!res.ok) throw new Error("Error al cargar estadísticas");
+  const json = (await res.json()) as { data: StatsResponse };
+  return json.data;
 }
 
-async function fetchClasificacion(): Promise<PescadorStats[]> {
-  // TODO: reemplazar por fetch("/api/clasificacion") cuando la BD esté conectada
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return MOCK_CLASIFICACION;
+async function fetchClasificacion(
+  competitionId: string
+): Promise<PescadorStats[]> {
+  const res = await fetch(`/api/competiciones/${competitionId}/clasificacion`);
+  if (!res.ok) throw new Error("Error al cargar clasificación");
+  const json = (await res.json()) as { data: PescadorStats[] };
+  return json.data;
 }
 
-export function useStats() {
+export function useStats(competitionId: string) {
   return useQuery({
-    queryKey: ["stats"],
-    queryFn: fetchStats,
+    queryKey: ["stats", competitionId],
+    queryFn: () => fetchStats(competitionId),
     refetchInterval: 30_000,
   });
 }
 
-export function useClasificacion() {
+export function useClasificacion(competitionId: string) {
   return useQuery({
-    queryKey: ["clasificacion"],
-    queryFn: fetchClasificacion,
+    queryKey: ["clasificacion", competitionId],
+    queryFn: () => fetchClasificacion(competitionId),
     refetchInterval: 30_000,
   });
 }

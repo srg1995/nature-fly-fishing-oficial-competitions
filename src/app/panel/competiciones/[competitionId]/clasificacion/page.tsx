@@ -1,0 +1,221 @@
+"use client";
+
+import { RefreshCw, Trophy, Medal } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/resultados/ExportButton";
+import { useClasificacion } from "@/hooks/use-stats";
+import { useCurrentCompetition } from "@/hooks/use-current-competition";
+import { cn } from "@/lib/utils";
+
+const positionColors: Record<number, { bg: string; text: string; border: string }> = {
+  1: { bg: "bg-amber-400", text: "text-amber-900", border: "border-amber-400" },
+  2: { bg: "bg-slate-300", text: "text-slate-800", border: "border-slate-300" },
+  3: { bg: "bg-orange-400", text: "text-orange-900", border: "border-orange-400" },
+};
+
+export default function ClasificacionPage() {
+  const competition = useCurrentCompetition();
+  const { data: clasificacion = [], isLoading, refetch, isFetching } =
+    useClasificacion(competition.id);
+  const top10 = clasificacion.slice(0, 10);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Trophy className="w-6 h-6 text-amber-500" />
+            Clasificación en Vivo
+          </h2>
+          <p className="text-muted-foreground text-sm mt-0.5">
+            Top 10 individual · Actualización automática cada 30 segundos
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="gap-2"
+          >
+            <RefreshCw className={cn("w-4 h-4", isFetching && "animate-spin")} />
+            Actualizar
+          </Button>
+          <ExportButton />
+        </div>
+      </div>
+
+      {!isLoading && top10.length >= 3 && (
+        <div className="grid grid-cols-3 gap-4">
+          <div className="flex flex-col items-center pt-8">
+            <div className="text-3xl mb-2">🥈</div>
+            <Card className="w-full border-slate-300 border-2">
+              <CardContent className="p-4 text-center">
+                <p className="font-bold">{top10[1].nombre}</p>
+                <p className="text-xs text-muted-foreground">{top10[1].club}</p>
+                <p className="text-sm text-muted-foreground">
+                  {top10[1].capturasValidas}
+                  {top10[1].capturasMenores19 > 0 && (
+                    <span className="text-orange-500"> (+{top10[1].capturasMenores19})</span>
+                  )}
+                  {" "}capturas
+                </p>
+                <p className="text-2xl font-bold text-primary mt-2">
+                  {top10[1].totalPuntos.toLocaleString("es-ES")}
+                </p>
+                <p className="text-xs text-muted-foreground">puntos</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="text-4xl mb-2">🥇</div>
+            <Card className="w-full border-amber-400 border-2 shadow-lg shadow-amber-100 dark:shadow-amber-900/20">
+              <CardContent className="p-4 text-center">
+                <Badge className="mb-1 bg-amber-400 text-amber-900 border-0">Líder</Badge>
+                <p className="font-bold text-lg">{top10[0].nombre}</p>
+                <p className="text-xs text-muted-foreground">{top10[0].club}</p>
+                <p className="text-sm text-muted-foreground">
+                  {top10[0].capturasValidas}
+                  {top10[0].capturasMenores19 > 0 && (
+                    <span className="text-orange-500"> (+{top10[0].capturasMenores19})</span>
+                  )}
+                  {" "}capturas
+                </p>
+                <p className="text-3xl font-bold text-primary mt-2">
+                  {top10[0].totalPuntos.toLocaleString("es-ES")}
+                </p>
+                <p className="text-xs text-muted-foreground">puntos</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex flex-col items-center pt-12">
+            <div className="text-3xl mb-2">🥉</div>
+            <Card className="w-full border-orange-400 border-2">
+              <CardContent className="p-4 text-center">
+                <p className="font-bold">{top10[2].nombre}</p>
+                <p className="text-xs text-muted-foreground">{top10[2].club}</p>
+                <p className="text-sm text-muted-foreground">
+                  {top10[2].capturasValidas}
+                  {top10[2].capturasMenores19 > 0 && (
+                    <span className="text-orange-500"> (+{top10[2].capturasMenores19})</span>
+                  )}
+                  {" "}capturas
+                </p>
+                <p className="text-2xl font-bold text-primary mt-2">
+                  {top10[2].totalPuntos.toLocaleString("es-ES")}
+                </p>
+                <p className="text-xs text-muted-foreground">puntos</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        {isLoading
+          ? Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="h-20 bg-muted animate-pulse rounded-xl" />
+            ))
+          : top10.map((pescador, idx) => {
+              const pos = idx + 1;
+              const colors = positionColors[pos];
+              return (
+                <Card
+                  key={pescador.pescadorId}
+                  className={cn(
+                    "transition-all",
+                    colors && `border-2 ${colors.border}`
+                  )}
+                >
+                  <CardContent className="p-4 flex items-center gap-4">
+                    <div
+                      className={cn(
+                        "flex items-center justify-center w-10 h-10 rounded-full font-bold text-lg flex-shrink-0",
+                        colors ? `${colors.bg} ${colors.text}` : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      {pos <= 3 ? <Medal className="w-5 h-5" /> : pos}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-base truncate">{pescador.nombre}</p>
+                      <p className="text-sm text-muted-foreground">{pescador.club}</p>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {pescador.plica && (
+                          <Badge variant="outline" className="text-xs font-mono">
+                            #{pescador.plica}
+                          </Badge>
+                        )}
+                        {pescador.tramo && (
+                          <span className="text-xs text-muted-foreground">{pescador.tramo}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-6 flex-shrink-0">
+                      <div className="text-center hidden sm:block">
+                        <p className="text-lg font-bold">
+                          {pescador.capturasValidas}
+                          {pescador.capturasMenores19 > 0 && (
+                            <span className="text-sm text-orange-500 ml-1">
+                              (+{pescador.capturasMenores19})
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-xs text-muted-foreground">capturas</p>
+                      </div>
+                      <div className="text-center hidden sm:block">
+                        <p className="text-lg font-bold">{pescador.mejorPieza} cm</p>
+                        <p className="text-xs text-muted-foreground">mejor pieza</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-primary">
+                          {pescador.totalPuntos.toLocaleString("es-ES")}
+                        </p>
+                        <p className="text-xs text-muted-foreground">puntos</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+      </div>
+
+      {!isLoading && clasificacion.length > 10 && (
+        <div className="space-y-1">
+          <p className="text-sm font-semibold text-muted-foreground px-2">Resto de clasificación</p>
+          {clasificacion.slice(10).map((pescador, idx) => (
+            <div
+              key={pescador.pescadorId}
+              className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <span className="w-8 text-center text-sm font-medium text-muted-foreground">
+                {idx + 11}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{pescador.nombre}</p>
+                <p className="text-xs text-muted-foreground">{pescador.club}</p>
+              </div>
+              <div className="flex items-center gap-4">
+                <Badge variant="success" className="text-xs">
+                  {pescador.capturasValidas} cap.
+                  {pescador.capturasMenores19 > 0 && (
+                    <span className="ml-1">(+{pescador.capturasMenores19})</span>
+                  )}
+                </Badge>
+                <span className="text-sm font-bold text-primary">
+                  {pescador.totalPuntos.toLocaleString("es-ES")} pts
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
