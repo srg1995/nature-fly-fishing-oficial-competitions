@@ -14,34 +14,41 @@ import { calcularPuntos, resolverEmpate } from "./puntuacion";
 
 // ─── Participantes ─────────────────────────────────────────────────────────────
 
-export async function getParticipantes(): Promise<Participante[]> {
+export async function getParticipantes(
+  competitionId: string
+): Promise<Participante[]> {
   const { rows } = await sql`
     SELECT
       id, nombre, plica, club, tramo, rio,
       created_at AS "createdAt", updated_at AS "updatedAt"
     FROM participantes
+    WHERE competition_id = ${competitionId}
     ORDER BY nombre ASC
   `;
   return rows as Participante[];
 }
 
-export async function getParticipanteById(id: string): Promise<Participante | null> {
+export async function getParticipanteById(
+  competitionId: string,
+  id: string
+): Promise<Participante | null> {
   const { rows } = await sql`
     SELECT
       id, nombre, plica, club, tramo, rio,
       created_at AS "createdAt", updated_at AS "updatedAt"
     FROM participantes
-    WHERE id = ${id}
+    WHERE id = ${id} AND competition_id = ${competitionId}
   `;
   return (rows[0] as Participante) ?? null;
 }
 
 export async function createParticipante(
+  competitionId: string,
   data: Omit<Participante, "id" | "createdAt" | "updatedAt">
 ): Promise<Participante> {
   const { rows } = await sql`
-    INSERT INTO participantes (nombre, plica, club, tramo, rio)
-    VALUES (${data.nombre}, ${data.plica}, ${data.club}, ${data.tramo}, ${data.rio})
+    INSERT INTO participantes (competition_id, nombre, plica, club, tramo, rio)
+    VALUES (${competitionId}, ${data.nombre}, ${data.plica}, ${data.club}, ${data.tramo}, ${data.rio})
     RETURNING
       id, nombre, plica, club, tramo, rio,
       created_at AS "createdAt", updated_at AS "updatedAt"
@@ -50,6 +57,7 @@ export async function createParticipante(
 }
 
 export async function updateParticipante(
+  competitionId: string,
   id: string,
   data: Partial<Omit<Participante, "id" | "createdAt" | "updatedAt">>
 ): Promise<Participante | null> {
@@ -62,7 +70,7 @@ export async function updateParticipante(
       tramo  = COALESCE(${data.tramo ?? null}, tramo),
       rio    = COALESCE(${data.rio ?? null}, rio),
       updated_at = NOW()
-    WHERE id = ${id}
+    WHERE id = ${id} AND competition_id = ${competitionId}
     RETURNING
       id, nombre, plica, club, tramo, rio,
       created_at AS "createdAt", updated_at AS "updatedAt"
@@ -70,18 +78,26 @@ export async function updateParticipante(
   return (rows[0] as Participante) ?? null;
 }
 
-export async function deleteParticipante(id: string): Promise<boolean> {
-  const { rowCount } = await sql`DELETE FROM participantes WHERE id = ${id}`;
+export async function deleteParticipante(
+  competitionId: string,
+  id: string
+): Promise<boolean> {
+  const { rowCount } = await sql`
+    DELETE FROM participantes WHERE id = ${id} AND competition_id = ${competitionId}
+  `;
   return (rowCount ?? 0) > 0;
 }
 
 // ─── Catches ──────────────────────────────────────────────────────────────────
 
-export async function getCatches(filters?: {
-  pescadorId?: string;
-  manga?: number;
-  valida?: boolean;
-}): Promise<CatchRecord[]> {
+export async function getCatches(
+  competitionId: string,
+  filters?: {
+    pescadorId?: string;
+    manga?: number;
+    valida?: boolean;
+  }
+): Promise<CatchRecord[]> {
   const pescadorId = filters?.pescadorId ?? null;
   const manga = filters?.manga ?? null;
   const valida = filters?.valida ?? null;
@@ -96,7 +112,8 @@ export async function getCatches(filters?: {
       created_at AS "createdAt", updated_at AS "updatedAt"
     FROM catch_records
     WHERE
-      (${pescadorId}::uuid IS NULL OR pescador_id = ${pescadorId}::uuid)
+      competition_id = ${competitionId}
+      AND (${pescadorId}::uuid IS NULL OR pescador_id = ${pescadorId}::uuid)
       AND (${manga}::int IS NULL OR manga = ${manga}::int)
       AND (${valida}::boolean IS NULL OR valida = ${valida}::boolean)
     ORDER BY created_at DESC
@@ -104,7 +121,10 @@ export async function getCatches(filters?: {
   return rows as CatchRecord[];
 }
 
-export async function getCatchById(id: string): Promise<CatchRecord | null> {
+export async function getCatchById(
+  competitionId: string,
+  id: string
+): Promise<CatchRecord | null> {
   const { rows } = await sql`
     SELECT
       id, pescador_id AS "pescadorId", session_id AS "sessionId",
@@ -114,20 +134,21 @@ export async function getCatchById(id: string): Promise<CatchRecord | null> {
       juez_id AS "juezId",
       created_at AS "createdAt", updated_at AS "updatedAt"
     FROM catch_records
-    WHERE id = ${id}
+    WHERE id = ${id} AND competition_id = ${competitionId}
   `;
   return (rows[0] as CatchRecord) ?? null;
 }
 
 export async function createCatch(
+  competitionId: string,
   data: Omit<CatchRecord, "id" | "puntos" | "createdAt" | "updatedAt">
 ): Promise<CatchRecord> {
   const puntos = calcularPuntos(data.longitudCm);
   const { rows } = await sql`
     INSERT INTO catch_records
-      (pescador_id, session_id, manga, tramo, rio, longitud_cm, puntos, valida, hora, observaciones, juez_id)
+      (competition_id, pescador_id, session_id, manga, tramo, rio, longitud_cm, puntos, valida, hora, observaciones, juez_id)
     VALUES
-      (${data.pescadorId}, ${data.sessionId ?? null}, ${data.manga}, ${data.tramo},
+      (${competitionId}, ${data.pescadorId}, ${data.sessionId ?? null}, ${data.manga}, ${data.tramo},
        ${data.rio}, ${data.longitudCm}, ${puntos}, ${data.valida},
        ${data.hora ?? null}::time, ${data.observaciones}, ${data.juezId ?? null})
     RETURNING
@@ -142,6 +163,7 @@ export async function createCatch(
 }
 
 export async function updateCatch(
+  competitionId: string,
   id: string,
   data: Partial<Omit<CatchRecord, "id" | "createdAt" | "updatedAt">>
 ): Promise<CatchRecord | null> {
@@ -160,7 +182,7 @@ export async function updateCatch(
       hora        = COALESCE(${data.hora ?? null}::time, hora),
       observaciones = COALESCE(${data.observaciones ?? null}, observaciones),
       updated_at  = NOW()
-    WHERE id = ${id}
+    WHERE id = ${id} AND competition_id = ${competitionId}
     RETURNING
       id, pescador_id AS "pescadorId", session_id AS "sessionId",
       manga, tramo, rio,
@@ -172,19 +194,25 @@ export async function updateCatch(
   return (rows[0] as CatchRecord) ?? null;
 }
 
-export async function deleteCatch(id: string): Promise<boolean> {
-  const { rowCount } = await sql`DELETE FROM catch_records WHERE id = ${id}`;
+export async function deleteCatch(
+  competitionId: string,
+  id: string
+): Promise<boolean> {
+  const { rowCount } = await sql`
+    DELETE FROM catch_records WHERE id = ${id} AND competition_id = ${competitionId}
+  `;
   return (rowCount ?? 0) > 0;
 }
 
 // ─── Sessions ─────────────────────────────────────────────────────────────────
 
 export async function createSession(
+  competitionId: string,
   data: Omit<CatchSession, "id" | "createdAt">
 ): Promise<CatchSession> {
   const { rows } = await sql`
-    INSERT INTO catch_sessions (pescador_id, manga, hora_inicio, hora_fin, juez)
-    VALUES (${data.pescadorId}, ${data.manga}, ${data.horaInicio ?? null}::time, ${data.horaFin ?? null}::time, ${data.juez})
+    INSERT INTO catch_sessions (competition_id, pescador_id, manga, hora_inicio, hora_fin, juez)
+    VALUES (${competitionId}, ${data.pescadorId}, ${data.manga}, ${data.horaInicio ?? null}::time, ${data.horaFin ?? null}::time, ${data.juez})
     RETURNING
       id, pescador_id AS "pescadorId", manga,
       hora_inicio::text AS "horaInicio", hora_fin::text AS "horaFin",
@@ -195,7 +223,9 @@ export async function createSession(
 
 // ─── Stats & Rankings ─────────────────────────────────────────────────────────
 
-export async function getPescadorStats(): Promise<PescadorStats[]> {
+export async function getPescadorStats(
+  competitionId: string
+): Promise<PescadorStats[]> {
   const { rows } = await sql`
     SELECT
       p.id AS "pescadorId",
@@ -207,7 +237,9 @@ export async function getPescadorStats(): Promise<PescadorStats[]> {
       COALESCE(SUM(c.puntos) FILTER (WHERE c.valida = true), 0)::int AS "totalPuntos",
       COALESCE(MAX(c.longitud_cm) FILTER (WHERE c.valida = true), 0)::float AS "mejorPieza"
     FROM participantes p
-    LEFT JOIN catch_records c ON c.pescador_id = p.id
+    LEFT JOIN catch_records c
+      ON c.pescador_id = p.id AND c.competition_id = p.competition_id
+    WHERE p.competition_id = ${competitionId}
     GROUP BY p.id, p.nombre, p.plica, p.club, p.tramo, p.rio
     ORDER BY "totalPuntos" DESC, "capturasValidas" DESC, "mejorPieza" DESC
   `;
@@ -218,7 +250,9 @@ export async function getPescadorStats(): Promise<PescadorStats[]> {
   }));
 }
 
-export async function getMangaStats(): Promise<MangaStats[]> {
+export async function getMangaStats(
+  competitionId: string
+): Promise<MangaStats[]> {
   const { rows } = await sql`
     SELECT
       manga,
@@ -227,13 +261,17 @@ export async function getMangaStats(): Promise<MangaStats[]> {
       COALESCE(SUM(puntos) FILTER (WHERE valida = true), 0)::int AS "totalPuntos",
       COUNT(DISTINCT pescador_id)::int AS "pescadoresParticipantes"
     FROM catch_records
+    WHERE competition_id = ${competitionId}
     GROUP BY manga
     ORDER BY manga ASC
   `;
   return rows as MangaStats[];
 }
 
-export async function getRecentCatches(limit = 10): Promise<RecentCatch[]> {
+export async function getRecentCatches(
+  competitionId: string,
+  limit = 10
+): Promise<RecentCatch[]> {
   const { rows } = await sql`
     SELECT
       c.id, c.pescador_id AS "pescadorId", c.session_id AS "sessionId",
@@ -245,14 +283,17 @@ export async function getRecentCatches(limit = 10): Promise<RecentCatch[]> {
       p.nombre
     FROM catch_records c
     JOIN participantes p ON p.id = c.pescador_id
-    WHERE c.valida = true
+    WHERE c.competition_id = ${competitionId} AND c.valida = true
     ORDER BY c.created_at DESC
     LIMIT ${limit}
   `;
   return rows as RecentCatch[];
 }
 
-export async function getBestFish(limit = 5): Promise<BestFish[]> {
+export async function getBestFish(
+  competitionId: string,
+  limit = 5
+): Promise<BestFish[]> {
   const { rows } = await sql`
     SELECT
       c.id, c.longitud_cm AS "longitudCm", c.puntos,
@@ -260,20 +301,20 @@ export async function getBestFish(limit = 5): Promise<BestFish[]> {
       c.hora::text AS hora, c.created_at AS "createdAt"
     FROM catch_records c
     JOIN participantes p ON p.id = c.pescador_id
-    WHERE c.valida = true AND c.longitud_cm >= 18
+    WHERE c.competition_id = ${competitionId} AND c.valida = true AND c.longitud_cm >= 18
     ORDER BY c.longitud_cm DESC
     LIMIT ${limit}
   `;
   return rows as BestFish[];
 }
 
-export async function getDashboardStats() {
+export async function getDashboardStats(competitionId: string) {
   const [pescadoresResult, catchesResult, pointsResult, mangasResult] =
     await Promise.all([
-      sql`SELECT COUNT(*)::int AS count FROM participantes`,
-      sql`SELECT COUNT(*)::int AS count FROM catch_records WHERE valida = true`,
-      sql`SELECT COALESCE(SUM(puntos), 0)::int AS total FROM catch_records WHERE valida = true`,
-      sql`SELECT COUNT(DISTINCT manga)::int AS count FROM catch_records`,
+      sql`SELECT COUNT(*)::int AS count FROM participantes WHERE competition_id = ${competitionId}`,
+      sql`SELECT COUNT(*)::int AS count FROM catch_records WHERE competition_id = ${competitionId} AND valida = true`,
+      sql`SELECT COALESCE(SUM(puntos), 0)::int AS total FROM catch_records WHERE competition_id = ${competitionId} AND valida = true`,
+      sql`SELECT COUNT(DISTINCT manga)::int AS count FROM catch_records WHERE competition_id = ${competitionId}`,
     ]);
 
   return {
@@ -284,7 +325,7 @@ export async function getDashboardStats() {
   };
 }
 
-// ─── Users ────────────────────────────────────────────────────────────────────
+// ─── Users (global) ───────────────────────────────────────────────────────────
 
 export async function getUserByEmail(email: string): Promise<(User & { passwordHash: string }) | null> {
   const { rows } = await sql`
@@ -328,6 +369,7 @@ export async function deleteUser(id: string): Promise<boolean> {
 // ─── Audit ────────────────────────────────────────────────────────────────────
 
 export async function createAuditEntry(data: {
+  competitionId: string | null;
   userId: string | null;
   accion: string;
   tabla: string | null;
@@ -337,15 +379,18 @@ export async function createAuditEntry(data: {
 }): Promise<void> {
   await sql`
     INSERT INTO audit_log
-      (user_id, accion, tabla, registro_id, datos_anteriores, datos_nuevos)
+      (competition_id, user_id, accion, tabla, registro_id, datos_anteriores, datos_nuevos)
     VALUES
-      (${data.userId}, ${data.accion}, ${data.tabla},
+      (${data.competitionId}, ${data.userId}, ${data.accion}, ${data.tabla},
        ${data.registroId}, ${JSON.stringify(data.datosAnteriores)},
        ${JSON.stringify(data.datosNuevos)})
   `;
 }
 
-export async function getAuditLog(limit = 50): Promise<AuditEntry[]> {
+export async function getAuditLog(
+  competitionId: string | null,
+  limit = 50
+): Promise<AuditEntry[]> {
   const { rows } = await sql`
     SELECT
       a.id, a.user_id AS "userId", a.accion, a.tabla,
@@ -356,6 +401,7 @@ export async function getAuditLog(limit = 50): Promise<AuditEntry[]> {
       u.nombre AS "userName"
     FROM audit_log a
     LEFT JOIN users u ON u.id = a.user_id
+    WHERE (${competitionId}::uuid IS NULL OR a.competition_id = ${competitionId}::uuid)
     ORDER BY a.created_at DESC
     LIMIT ${limit}
   `;
@@ -364,8 +410,10 @@ export async function getAuditLog(limit = 50): Promise<AuditEntry[]> {
 
 // ─── Clasificación con desempate ──────────────────────────────────────────────
 
-export async function getClasificacion(): Promise<PescadorStats[]> {
-  const stats = await getPescadorStats();
+export async function getClasificacion(
+  competitionId: string
+): Promise<PescadorStats[]> {
+  const stats = await getPescadorStats(competitionId);
   return stats.sort((a, b) => {
     if (b.totalPuntos !== a.totalPuntos) return b.totalPuntos - a.totalPuntos;
     return resolverEmpate(a, b);

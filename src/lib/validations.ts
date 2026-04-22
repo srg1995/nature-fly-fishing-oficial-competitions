@@ -4,6 +4,7 @@ export const createParticipanteSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
   plica: z.string().max(50).default(""),
   club: z.string().max(100).default(""),
+  turno: z.enum(["A", "B"]).default("A"),
   tramo: z.string().max(100).default(""),
   rio: z.string().max(100).default(""),
 });

@@ -11,9 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useExport } from "@/hooks/use-export";
+import { useCurrentCompetition } from "@/hooks/use-current-competition";
 
 export function ExportButton() {
-  const { exportarExcel, exportarPDF, isExporting } = useExport();
+  const competition = useCurrentCompetition();
+  const { exportarExcel, exportarPDF, isExporting } = useExport(competition.id);
 
   return (
     <DropdownMenu>
