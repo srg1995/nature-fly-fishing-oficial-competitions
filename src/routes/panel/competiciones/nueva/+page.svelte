@@ -162,33 +162,6 @@
       <Alert message={form.error} />
     {/if}
 
-    {#snippet navButtons()}
-      <div class="flex justify-between">
-        <button
-          type="button"
-          onclick={() => go(-1)}
-          disabled={stepIdx === 0}
-          class="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
-        >
-          Anterior
-        </button>
-        {#if stepIdx < steps.length - 1}
-          <button
-            type="button"
-            onclick={() => go(1)}
-            disabled={!valid}
-            class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
-          >
-            Siguiente
-          </button>
-        {:else}
-          <button class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-            Crear competición
-          </button>
-        {/if}
-      </div>
-    {/snippet}
-
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <form
       method="POST"
@@ -199,7 +172,15 @@
         }
       }}
     >
-      {@render navButtons()}
+      {#if stepIdx > 0}
+        <button
+          type="button"
+          onclick={() => go(-1)}
+          class="text-sm text-primary hover:underline"
+        >
+          ← Volver a {stepLabels[steps[stepIdx - 1]]}
+        </button>
+      {/if}
 
       <div class="rounded-xl border bg-card p-6 space-y-4">
         {#if current === "nivel"}
@@ -370,7 +351,30 @@
       <input type="hidden" name="descripcion" value={descripcion} />
       <input type="hidden" name="estado" value={estado} />
 
-      {@render navButtons()}
+      <div class="flex justify-between">
+        <button
+          type="button"
+          onclick={() => go(-1)}
+          disabled={stepIdx === 0}
+          class="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
+        >
+          Anterior
+        </button>
+        {#if stepIdx < steps.length - 1}
+          <button
+            type="button"
+            onclick={() => go(1)}
+            disabled={!valid}
+            class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          >
+            Siguiente
+          </button>
+        {:else}
+          <button class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+            Crear competición
+          </button>
+        {/if}
+      </div>
     </form>
   </div>
 </div>
