@@ -4,6 +4,8 @@
 
   export let data: PageData;
   export let form: ActionData;
+
+  $: canDelete = !!data.rol && ["admin", "organizador", "super_admin"].includes(data.rol);
 </script>
 
 <div class="space-y-6">
@@ -50,6 +52,7 @@
           <th class="text-left px-4 py-2">Puntos</th>
           <th class="text-left px-4 py-2">Río/Tramo</th>
           <th class="text-left px-4 py-2">Estado</th>
+          <th class="px-4 py-2"><span class="sr-only">Acciones</span></th>
         </tr>
       </thead>
       <tbody class="divide-y divide-border">
@@ -61,6 +64,14 @@
             <td class="px-4 py-2">{formatPuntos(c.puntos)}</td>
             <td class="px-4 py-2">{c.rio} · {c.tramo}</td>
             <td class="px-4 py-2">{c.valida ? "Válida" : "No válida"}</td>
+            <td class="px-4 py-2 text-right">
+              {#if canDelete}
+                <form method="POST" action="?/delete" onsubmit={(e) => { if (!confirm("¿Eliminar esta captura?")) e.preventDefault(); }}>
+                  <input type="hidden" name="id" value={c.id} />
+                  <button class="text-sm text-destructive hover:underline">Eliminar</button>
+                </form>
+              {/if}
+            </td>
           </tr>
         {/each}
       </tbody>

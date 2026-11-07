@@ -1,13 +1,13 @@
-import { createCatch, getCatches, getParticipantes } from "$lib/db";
+import { createAuditEntry, createCatch, deleteCatch, getCatchById, getCatches, getParticipantes } from "$lib/db";
 import { createCatchSchema } from "$lib/validations";
 import { fail, redirect } from "@sveltejs/kit";
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
   const [participantes, capturas] = await Promise.all([
     getParticipantes(params.competitionId),
     getCatches(params.competitionId),
   ]);
-  return { participantes, capturas: capturas.slice(0, 50) };
+  return { participantes, capturas: capturas.slice(0, 50), rol: locals.session?.rol ?? null };
 };
 
 export const actions = {
@@ -41,6 +41,28 @@ export const actions = {
       hora: parsed.data.hora ?? null,
       juezId: parsed.data.juezId ?? locals.session.sub,
       observaciones: parsed.data.observaciones ?? "",
+    });
+    return { ok: true };
+  },
+
+  delete: async ({ request, params, locals }) => {
+    if (!locals.session) throw redirect(302, "/login");
+    if (!["admin", "organizador", "super_admin"].includes(locals.session.rol)) {
+      return fail(403, { error: "Permisos insuficientes" });
+    }
+    const id = String((await request.formData()).get("id") ?? "");
+    const existing = await getCatchById(params.competitionId, id);
+    if (!existing) return fail(404, { error: "Captura no encontrada" });
+
+    await deleteCatch(params.competitionId, id);
+    await createAuditEntry({
+      competitionId: params.competitionId,
+      userId: locals.session.sub,
+      accion: "DELETE_CATCH",
+      tabla: "catch_records",
+      registroId: id,
+      datosAnteriores: existing as unknown as Record<string, unknown>,
+      datosNuevos: null,
     });
     return { ok: true };
   },

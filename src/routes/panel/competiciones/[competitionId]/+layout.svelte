@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ThemeToggle from "$lib/components/layout/ThemeToggle.svelte";
   import type { LayoutData } from "./$types";
 
   export let data: LayoutData;
@@ -24,9 +25,12 @@
         <h1 class="text-xl font-bold">{data.competition.nombre}</h1>
         <p class="text-sm text-muted-foreground">{data.competition.edicion}</p>
       </div>
-      <a href="/logout" class="rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted">
-        Cerrar sesión
-      </a>
+      <div class="flex items-center gap-2">
+        <ThemeToggle />
+        <a href="/logout" class="rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted">
+          Cerrar sesión
+        </a>
+      </div>
     </div>
     <nav class="max-w-7xl mx-auto px-4 pb-3 flex flex-wrap gap-2">
       {#each tabs as tab}

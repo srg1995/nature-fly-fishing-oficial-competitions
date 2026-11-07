@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ExportButton from "$lib/components/resultados/ExportButton.svelte";
   import { formatPuntos } from "$lib/utils";
   import type { PageData } from "./$types";
 
@@ -6,9 +7,12 @@
 </script>
 
 <div class="space-y-6">
-  <div>
-    <h2 class="text-2xl font-bold">Resultados</h2>
-    <p class="text-sm text-muted-foreground">Tabla completa de resultados.</p>
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <h2 class="text-2xl font-bold">Resultados</h2>
+      <p class="text-sm text-muted-foreground">Tabla completa de resultados.</p>
+    </div>
+    <ExportButton competitionId={data.competitionId} />
   </div>
 
   <div class="rounded-xl border overflow-hidden bg-card">
