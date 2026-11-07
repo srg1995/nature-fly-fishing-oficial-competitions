@@ -1,10 +1,15 @@
 {
   "name": "nature-fly-fishing-oficial-competitions",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:sveltekit": "vite dev",
     "build": "next build",
+    "build:sveltekit": "vite build",
+    "preview:sveltekit": "vite preview",
+    "check:sveltekit": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.svelte.json",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
@@ -14,6 +19,7 @@
     "db:setup": "bun scripts/setup-db.mjs"
   },
   "dependencies": {
+    "@sveltejs/kit": "^2.39.5",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -47,12 +53,15 @@
     "@radix-ui/react-toast": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.1.6",
     "sonner": "^1.7.1",
+    "svelte": "^5.43.2",
     "bcryptjs": "^2.4.3",
     "jose": "^5.10.0",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4"
   },
   "devDependencies": {
+    "@sveltejs/adapter-vercel": "^5.10.2",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "typescript": "^5.7.2",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
@@ -64,6 +73,8 @@
     "postcss": "^8.4.49",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.17.0",
-    "eslint-config-next": "^15.1.0"
+    "eslint-config-next": "^15.1.0",
+    "svelte-check": "^4.3.4",
+    "vite": "^7.2.2"
   }
 }
