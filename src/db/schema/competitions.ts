@@ -20,6 +20,7 @@ export const nivelCompeticionEnum = pgEnum("nivel_competicion", [
   "nacional",
   "autonomica",
   "provincial",
+  "open",
 ]);
 
 export const estadoCompeticionEnum = pgEnum("estado_competicion", [
@@ -92,9 +93,10 @@ export const competitions = pgTable(
     nivelTerritorioCheck: check(
       "competitions_nivel_territorio_check",
       sql`(
-        (${table.nivel} = 'nacional' AND ${table.comunidadAutonomaId} IS NULL AND ${table.provinciaId} IS NULL)
-        OR (${table.nivel} = 'autonomica' AND ${table.comunidadAutonomaId} IS NOT NULL AND ${table.provinciaId} IS NULL)
-        OR (${table.nivel} = 'provincial' AND ${table.comunidadAutonomaId} IS NOT NULL AND ${table.provinciaId} IS NOT NULL)
+        (${table.nivel}::text = 'nacional' AND ${table.comunidadAutonomaId} IS NULL AND ${table.provinciaId} IS NULL)
+        OR (${table.nivel}::text = 'open' AND ${table.comunidadAutonomaId} IS NULL AND ${table.provinciaId} IS NULL)
+        OR (${table.nivel}::text = 'autonomica' AND ${table.comunidadAutonomaId} IS NOT NULL AND ${table.provinciaId} IS NULL)
+        OR (${table.nivel}::text = 'provincial' AND ${table.comunidadAutonomaId} IS NOT NULL AND ${table.provinciaId} IS NOT NULL)
       )`
     ),
     fechasCheck: check(

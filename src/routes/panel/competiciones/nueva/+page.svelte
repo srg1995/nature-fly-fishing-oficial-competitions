@@ -20,6 +20,7 @@
     { key: "nacional", title: "Nacional", desc: "Ámbito en todo el territorio nacional." },
     { key: "autonomica", title: "Autonómica", desc: "Restringida a una comunidad autónoma." },
     { key: "provincial", title: "Provincial", desc: "Restringida a una provincia concreta." },
+    { key: "open", title: "Open", desc: "Sin ubicación: abierta a cualquier participante." },
   ];
 
   let nivel = $state<NivelCompeticion | null>(null);
@@ -43,7 +44,7 @@
   let stepIdx = $state(0);
 
   const steps = $derived<StepKey[]>(
-    nivel === "nacional"
+    nivel === "nacional" || nivel === "open"
       ? ["nivel", "detalles", "organizador", "resumen"]
       : ["nivel", "territorio", "detalles", "organizador", "resumen"]
   );
@@ -80,6 +81,8 @@
   }
 
   function selectNivel(value: NivelCompeticion) {
+    // Volver y elegir el mismo nivel no debe borrar el territorio ya elegido
+    if (nivel === value) return;
     nivel = value;
     comunidadAutonomaId = null;
     provinciaId = null;
@@ -89,21 +92,27 @@
     stepIdx = Math.min(Math.max(stepIdx + dir, 0), steps.length - 1);
   }
 
-  const summary = $derived<Array<[string, string]>>([
-    ["Nivel", niveles.find((n) => n.key === nivel)?.title ?? "—"],
-    ...(ccaaNombre ? ([["Comunidad", ccaaNombre]] as Array<[string, string]>) : []),
-    ...(provinciaNombre ? ([["Provincia", provinciaNombre]] as Array<[string, string]>) : []),
-    ["Nombre", nombre || "—"],
-    ["Edición", edicion || "—"],
-    ["Slug", slug || "—"],
-    ["Modalidad", modalidad],
-    ["Fechas", `${fechaInicio} → ${fechaFin}`],
-    ["Lugar", lugar || "—"],
-    ["Organizador", organizador || "—"],
-    ["Total mangas", String(totalMangas)],
-    ["Longitud mínima", `${minimaLongitud} cm`],
-    ["Ríos", rios || "—"],
-    ["Tramos", tramos || "—"],
+  // Solo se puede volver a pasos ya recorridos; avanzar exige validar cada paso
+  function goToStep(key: StepKey) {
+    const idx = steps.indexOf(key);
+    if (idx !== -1 && idx < stepIdx) stepIdx = idx;
+  }
+
+  const summary = $derived<Array<[string, string, StepKey]>>([
+    ["Nivel", niveles.find((n) => n.key === nivel)?.title ?? "—", "nivel"],
+    ...(ccaaNombre ? ([["Comunidad", ccaaNombre, "territorio"]] as Array<[string, string, StepKey]>) : []),
+    ...(provinciaNombre ? ([["Provincia", provinciaNombre, "territorio"]] as Array<[string, string, StepKey]>) : []),
+    ["Nombre", nombre || "—", "detalles"],
+    ["Edición", edicion || "—", "detalles"],
+    ["Slug", slug || "—", "detalles"],
+    ["Modalidad", modalidad, "detalles"],
+    ["Fechas", `${fechaInicio} → ${fechaFin}`, "detalles"],
+    ["Lugar", lugar || "—", "detalles"],
+    ["Organizador", organizador || "—", "organizador"],
+    ["Total mangas", String(totalMangas), "organizador"],
+    ["Longitud mínima", `${minimaLongitud} cm`, "organizador"],
+    ["Ríos", rios || "—", "organizador"],
+    ["Tramos", tramos || "—", "organizador"],
   ]);
 
   const input = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm";
@@ -124,14 +133,27 @@
             : 'text-muted-foreground'}"
           aria-current={i === stepIdx ? "step" : undefined}
         >
-          <span
-            class="w-7 h-7 rounded-full border flex items-center justify-center {i === stepIdx
-              ? 'bg-primary text-primary-foreground border-primary'
-              : i < stepIdx
-                ? 'bg-primary/10 text-primary border-primary/40'
+          {#if i < stepIdx}
+            <button
+              type="button"
+              onclick={() => goToStep(key)}
+              class="flex items-center gap-2 hover:underline"
+              aria-label="Volver al paso {i + 1}: {stepLabels[key]}"
+            >
+              <span
+                class="w-7 h-7 rounded-full border flex items-center justify-center bg-primary/10 text-primary border-primary/40"
+                >{i + 1}</span
+              >
+              {stepLabels[key]}
+            </button>
+          {:else}
+            <span
+              class="w-7 h-7 rounded-full border flex items-center justify-center {i === stepIdx
+                ? 'bg-primary text-primary-foreground border-primary'
                 : 'bg-muted'}">{i + 1}</span
-          >
-          {stepLabels[key]}
+            >
+            {stepLabels[key]}
+          {/if}
         </li>
       {/each}
     </ol>
@@ -150,10 +172,20 @@
         }
       }}
     >
+      {#if stepIdx > 0}
+        <button
+          type="button"
+          onclick={() => go(-1)}
+          class="text-sm text-primary hover:underline"
+        >
+          ← Volver a {stepLabels[steps[stepIdx - 1]]}
+        </button>
+      {/if}
+
       <div class="rounded-xl border bg-card p-6 space-y-4">
         {#if current === "nivel"}
           <h2 class="text-xl font-bold">Nivel de la competición</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {#each niveles as opt}
               <button
                 type="button"
@@ -282,10 +314,18 @@
           <h2 class="text-xl font-bold">Resumen</h2>
           <p class="text-sm text-muted-foreground">Revisa los datos antes de crear la competición.</p>
           <dl class="divide-y rounded-xl border">
-            {#each summary as [label, value]}
-              <div class="grid grid-cols-[140px_1fr] gap-4 px-4 py-2.5 text-sm">
+            {#each summary as [label, value, step]}
+              <div class="grid grid-cols-[140px_1fr_auto] gap-4 px-4 py-2.5 text-sm">
                 <dt class="text-muted-foreground">{label}</dt>
                 <dd class="font-medium">{value}</dd>
+                <button
+                  type="button"
+                  onclick={() => goToStep(step)}
+                  class="text-xs text-primary hover:underline"
+                  aria-label="Cambiar {label}"
+                >
+                  Cambiar
+                </button>
               </div>
             {/each}
           </dl>
@@ -311,15 +351,7 @@
       <input type="hidden" name="descripcion" value={descripcion} />
       <input type="hidden" name="estado" value={estado} />
 
-      <div class="flex justify-between">
-        <button
-          type="button"
-          onclick={() => go(-1)}
-          disabled={stepIdx === 0}
-          class="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
-        >
-          Anterior
-        </button>
+      <div class="flex justify-end">
         {#if stepIdx < steps.length - 1}
           <button
             type="button"

@@ -4,6 +4,7 @@ export const nivelLabel: Record<NivelCompeticion, string> = {
   nacional: "Nacional",
   autonomica: "Autonómica",
   provincial: "Provincial",
+  open: "Open",
 };
 
 export const estadoLabel: Record<EstadoCompeticion, string> = {

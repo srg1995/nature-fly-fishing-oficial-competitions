@@ -19,6 +19,19 @@ describe("createCompetitionSchema", () => {
     expect(r.estado).toBe("borrador");
   });
 
+  it("acepta una competición open sin ubicación y rechaza que lleve territorio", () => {
+    const r = createCompetitionSchema.parse({ ...base, nivel: "open" });
+    expect(r.comunidadAutonomaId).toBeNull();
+    expect(r.provinciaId).toBeNull();
+    expect(
+      createCompetitionSchema.safeParse({ ...base, nivel: "open", comunidadAutonomaId: 3 }).success
+    ).toBe(false);
+  });
+
+  it("rechaza niveles desconocidos", () => {
+    expect(createCompetitionSchema.safeParse({ ...base, nivel: "mundial" }).success).toBe(false);
+  });
+
   it("exige comunidad en autonómica y provincia en provincial", () => {
     expect(createCompetitionSchema.safeParse({ ...base, nivel: "autonomica" }).success).toBe(false);
     expect(

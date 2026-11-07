@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { nivelLabel } from "$lib/public-competitions";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -35,7 +36,7 @@
               <td class="px-4 py-2">
                 <a href={`/panel/competiciones/${c.id}`} class="hover:underline">{c.nombre}</a>
               </td>
-              <td class="px-4 py-2">{c.nivel}</td>
+              <td class="px-4 py-2">{nivelLabel[c.nivel]}</td>
               <td class="px-4 py-2">{c.estado}</td>
               <td class="px-4 py-2">{c.fechaInicio}</td>
             </tr>

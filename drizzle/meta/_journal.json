@@ -29,6 +29,13 @@
       "when": 1713657600003,
       "tag": "0004_user_role_enum",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1713657600004,
+      "tag": "0005_nivel_open",
+      "breakpoints": true
     }
   ]
 }
