@@ -351,15 +351,7 @@
       <input type="hidden" name="descripcion" value={descripcion} />
       <input type="hidden" name="estado" value={estado} />
 
-      <div class="flex justify-between">
-        <button
-          type="button"
-          onclick={() => go(-1)}
-          disabled={stepIdx === 0}
-          class="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
-        >
-          Anterior
-        </button>
+      <div class="flex justify-end">
         {#if stepIdx < steps.length - 1}
           <button
             type="button"
