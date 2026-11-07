@@ -1,6 +1,50 @@
 import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig } from "vite";
+import { playwright } from "@vitest/browser-playwright";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [sveltekit()],
+  test: {
+    // Tests de componentes (*.svelte.test.ts) en un navegador real
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "client",
+          include: ["src/**/*.svelte.test.ts"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: "chromium" }],
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "server",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+          exclude: ["src/**/*.svelte.test.ts"],
+        },
+      },
+    ],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      include: [
+        "src/lib/puntuacion.ts",
+        "src/lib/utils.ts",
+        "src/lib/components/ui/**/*.svelte",
+      ],
+      // El CI falla si la cobertura baja de estos umbrales
+      thresholds: {
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80,
+      },
+    },
+  },
 });
