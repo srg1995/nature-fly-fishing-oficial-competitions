@@ -1,11 +1,22 @@
-import { createCompetition } from "$lib/queries/competitions";
+import { createCompetition, listComunidadesAutonomas, listProvincias } from "$lib/queries/competitions";
 import { createCompetitionSchema, generateSlug } from "$lib/validations-competition";
 import { fail, redirect } from "@sveltejs/kit";
 
 export const load = async ({ locals }) => {
   if (!locals.session) throw redirect(302, "/login");
   if (locals.session.rol !== "super_admin") throw redirect(302, "/panel");
-  return {};
+  const [ccaa, provincias] = await Promise.all([
+    listComunidadesAutonomas(),
+    listProvincias(),
+  ]);
+  return {
+    ccaa: ccaa.map((c) => ({ id: c.id, nombre: c.nombre })),
+    provincias: provincias.map((p) => ({
+      id: p.id,
+      nombre: p.nombre,
+      comunidadAutonomaId: p.comunidadAutonomaId,
+    })),
+  };
 };
 
 export const actions = {
@@ -25,6 +36,8 @@ export const actions = {
     const estado = String(form.get("estado") ?? "borrador");
     const totalMangas = Number(form.get("totalMangas") ?? 4);
     const minimaLongitud = Number(form.get("minimaLongitud") ?? 19);
+    const modalidad = String(form.get("modalidad") ?? "").trim() || "lance_mosca_duos";
+    const slug = String(form.get("slug") ?? "").trim() || generateSlug(nombre, edicion);
     const descripcion = String(form.get("descripcion") ?? "").trim();
     const rios = String(form.get("rios") ?? "")
       .split(",")
@@ -49,8 +62,8 @@ export const actions = {
     const parsed = createCompetitionSchema.safeParse({
       nombre,
       edicion,
-      modalidad: "lance_mosca_duos",
-      slug: generateSlug(nombre, edicion),
+      modalidad,
+      slug,
       nivel,
       comunidadAutonomaId,
       provinciaId,
