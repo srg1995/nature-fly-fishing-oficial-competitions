@@ -20,6 +20,7 @@
     { key: "nacional", title: "Nacional", desc: "Ámbito en todo el territorio nacional." },
     { key: "autonomica", title: "Autonómica", desc: "Restringida a una comunidad autónoma." },
     { key: "provincial", title: "Provincial", desc: "Restringida a una provincia concreta." },
+    { key: "open", title: "Open", desc: "Sin ubicación: abierta a cualquier participante." },
   ];
 
   let nivel = $state<NivelCompeticion | null>(null);
@@ -43,7 +44,7 @@
   let stepIdx = $state(0);
 
   const steps = $derived<StepKey[]>(
-    nivel === "nacional"
+    nivel === "nacional" || nivel === "open"
       ? ["nivel", "detalles", "organizador", "resumen"]
       : ["nivel", "territorio", "detalles", "organizador", "resumen"]
   );
@@ -153,7 +154,7 @@
       <div class="rounded-xl border bg-card p-6 space-y-4">
         {#if current === "nivel"}
           <h2 class="text-xl font-bold">Nivel de la competición</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {#each niveles as opt}
               <button
                 type="button"

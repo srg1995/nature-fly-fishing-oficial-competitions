@@ -10,7 +10,7 @@ import { createCompetitionSchema } from "$lib/validations-competition";
 import type { EstadoCompeticion, NivelCompeticion } from "@/types";
 import type { RequestHandler } from "./$types";
 
-const nivelValues: NivelCompeticion[] = ["nacional", "autonomica", "provincial"];
+const nivelValues: NivelCompeticion[] = ["nacional", "autonomica", "provincial", "open"];
 const estadoValues: EstadoCompeticion[] = [
   "borrador",
   "publicada",

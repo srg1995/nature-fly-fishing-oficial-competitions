@@ -20,7 +20,7 @@ export interface Provincia {
 }
 
 // ─── Competitions ─────────────────────────────────────────────────────────────
-export type NivelCompeticion = "nacional" | "autonomica" | "provincial";
+export type NivelCompeticion = "nacional" | "autonomica" | "provincial" | "open";
 
 export type EstadoCompeticion =
   | "borrador"

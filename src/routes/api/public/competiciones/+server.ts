@@ -6,6 +6,7 @@ const nivelValues: NivelCompeticion[] = [
   "nacional",
   "autonomica",
   "provincial",
+  "open",
 ];
 
 function isNivel(value: string): value is NivelCompeticion {

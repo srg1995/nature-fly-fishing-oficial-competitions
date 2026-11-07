@@ -38,6 +38,14 @@ const nacionalSchema = z.object({
   provinciaId: z.null().default(null),
 });
 
+// Open: sin ubicación, libre para cualquier participante.
+const openSchema = z.object({
+  ...baseFields,
+  nivel: z.literal("open"),
+  comunidadAutonomaId: z.null().default(null),
+  provinciaId: z.null().default(null),
+});
+
 const autonomicaSchema = z.object({
   ...baseFields,
   nivel: z.literal("autonomica"),
@@ -55,6 +63,7 @@ const provincialSchema = z.object({
 export const createCompetitionSchema = z
   .discriminatedUnion("nivel", [
     nacionalSchema,
+    openSchema,
     autonomicaSchema,
     provincialSchema,
   ])
