@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { competitions } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -20,12 +19,12 @@ export class HttpError extends Error {
   }
 }
 
-export function toJsonResponse(error: unknown): NextResponse {
+export function toJsonResponse(error: unknown): Response {
   if (error instanceof HttpError) {
-    return NextResponse.json({ error: error.message }, { status: error.status });
+    return Response.json({ error: error.message }, { status: error.status });
   }
   console.error(error);
-  return NextResponse.json({ error: "Error interno" }, { status: 500 });
+  return Response.json({ error: "Error interno" }, { status: 500 });
 }
 
 export async function loadCompetition(competitionId: string): Promise<Competition> {
