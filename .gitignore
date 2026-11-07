@@ -13,6 +13,8 @@
 
 # production
 /build
+/.svelte-kit
+.vercel/output
 
 # misc
 .DS_Store
