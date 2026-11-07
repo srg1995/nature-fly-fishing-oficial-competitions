@@ -34,8 +34,14 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html"],
       include: [
+        "src/hooks.server.ts",
         "src/lib/puntuacion.ts",
         "src/lib/utils.ts",
+        "src/lib/auth-server.ts",
+        "src/lib/auth-competition.ts",
+        "src/lib/validations.ts",
+        "src/lib/validations-competition.ts",
+        "src/lib/excel.ts",
         "src/lib/components/ui/**/*.svelte",
       ],
       // El CI falla si la cobertura baja de estos umbrales
