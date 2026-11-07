@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: SvelteKit check
-        run: bun run check:sveltekit
+      - name: Type check
+        run: bun run check
 
       - name: SvelteKit build
-        run: bun run build:sveltekit
+        run: bun run build
