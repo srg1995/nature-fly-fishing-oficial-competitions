@@ -44,7 +44,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build SvelteKit for Vercel
-        run: bun run build:sveltekit
+        run: bun run build
 
       - name: Deploy to Vercel
         env:

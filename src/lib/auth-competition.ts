@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { competitions } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import type { JwtPayload } from "./auth";
+import type { JwtPayload } from "./auth-server";
 import type { Competition, UserRole } from "@/types";
 
 /**
